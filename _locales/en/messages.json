@@ -1,0 +1,14 @@
+{
+  "extensionName": {
+    "message": "Shiny! Shiny!",
+    "description": "Extension name."
+  },
+  "extensionShortName": {
+    "message": "Shiny",
+    "description": "Extension short-name."
+  },
+  "extensionDescription": {
+    "message": "Shiny! Shiny!, a simple, secure text editor for Chrome (based on Ace).",
+    "description": "Extension description."
+  }
+}
