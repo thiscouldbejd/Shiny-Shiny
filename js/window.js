@@ -330,7 +330,8 @@ function extend(destination, source) {
 var eventMatchers = {
     'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
     'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
-}
+};
+
 var defaultOptions = {
     pointerX: 0,
     pointerY: 0,
@@ -341,5 +342,5 @@ var defaultOptions = {
     metaKey: false,
     bubbles: true,
     cancelable: true
-}
+};
 // -- Stolen from StackOverflow [http://stackoverflow.com/questions/6157929/how-to-simulate-mouse-click-using-javascript] --
