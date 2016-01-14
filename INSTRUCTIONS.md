@@ -30,7 +30,7 @@ Styling Instructions
 ====================
 
 - Styled text is implemented via Markdown
-- 
+
 - To title your work, put your title at the start of your work, between '@' symbols (e.g. @My Answers@).
 
 - To put a header in your work, put a '#' before the heading line (e.g. #Section 1)
