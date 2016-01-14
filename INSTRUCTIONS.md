@@ -1,10 +1,18 @@
-Instructions for Users
-======================
-- Make sure you save your work regularly - Press 'CTRL S' to save your work to a USB key or similar.
+Displayng these Instructions
+============================
+- Press 'CTRL ?|/' to bring up these instructions from within the editor
 
-- To INCREASE the screen font size, press 'CTRL +/=' 
+- Press 'CTRL ?|/' or 'ESC' to close instructions 
 
-- To REDUCE the screen font size, press 'CTRL -/_'
+Instructions
+============
+- Press 'CTRL S' to save your work to a USB key or similar ('CTRL SHIFT O' to open)
+
+- To INCREASE the screen font size, press 'CTRL +|=' 
+
+- To REDUCE the screen font size, press 'CTRL -|_'
+
+- To restore the DEFAULT screen font size, press 'CTRL 0'
 
 - To print your work, press 'CTRL P'
 
@@ -14,16 +22,16 @@ Instructions for Users
 
 - To paste text, press 'CTRL V'
 
-- To undo your last action, press 'CTRL Z'
-
-- Always include a blank line between paragraphs
+- To undo your last action, press 'CTRL Z' (there are multiple levels of undo, press 'CTRL SHIFT Z' to redo)
 
 - If you are typing but nothing appears on screen, make sure the cursor is flashing. If it isn't, click somewhere on the screen and it'll become active again
 
-Advanced Instructions for Users
-===============================
+Styling Instructions
+====================
 
-- To title your work, put your title at the start of your work, between '@' symbols (e.g. @My Exam Answers@).
+- Styled text is implemented via Markdown
+- 
+- To title your work, put your title at the start of your work, between '@' symbols (e.g. @My Answers@).
 
 - To put a header in your work, put a '#' before the heading line (e.g. #Section 1)
 

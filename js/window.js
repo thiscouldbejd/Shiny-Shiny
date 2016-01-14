@@ -82,7 +82,6 @@ $(document).ready(function(){
 			
 			var converter = new Markdown.Converter();
 			var markdown_HTML = converter.makeHtml(editor_Text);
-			console.log(markdown_HTML);
 			var iframe = document.createElement("iframe");
 			iframe.srcdoc = markdown_HTML;
 			iframe.width = iframe.height = 1;
@@ -183,6 +182,29 @@ $(document).ready(function(){
 		exec: function(editor) {
 
 			editor.setTheme(light_Theme);
+			
+		},
+		readOnly: true
+	});
+	
+	editor.commands.addCommand({
+		name: 'Show Help',
+		bindKey: {win: 'Ctrl-/',  mac: 'Command-/'},
+		exec: function(editor) {
+
+        var screenWidth = screen.availWidth;
+	      var screenHeight = screen.availHeight;
+	      var width = screenWidth / 1.5;
+	      var height = screenHeight / 1.5;
+	
+				chrome.app.window.create('instructions.html', {
+  		    bounds: {
+  			    width: Math.round(width),
+  			    height: Math.round(height),
+  			    left: Math.round((screenWidth - width) / 2),
+  			    top: Math.round((screenHeight - height) / 2)
+  		    }
+	      });
 			
 		},
 		readOnly: true
