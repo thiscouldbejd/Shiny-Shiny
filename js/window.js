@@ -210,6 +210,17 @@ $(document).ready(function(){
 		readOnly: true
 	});
 
+	editor.commands.addCommand({
+		name: 'Toggle Insert/Overwrite',
+		bindKey: {win: 'Ctrl-I',  mac: 'Command-I'},
+		exec: function(editor) {
+
+			editor.setOverwrite(!editor.getOverwrite());
+			
+		},
+		readOnly: true
+	});
+
 	focus();
 
 });

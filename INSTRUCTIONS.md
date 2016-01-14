@@ -24,6 +24,8 @@ Instructions
 
 - To undo your last action, press 'CTRL Z' (there are multiple levels of undo, press 'CTRL SHIFT Z' to redo)
 
+- To toggle between INSERT (where text you type is inserted at the cursor point) and OVERWRITE (where new text overwrites existing text at the cursor point) modes, press 'CTRL I'
+
 - If you are typing but nothing appears on screen, make sure the cursor is flashing. If it isn't, click somewhere on the screen and it'll become active again
 
 Styling Instructions
