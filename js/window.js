@@ -79,20 +79,16 @@ $(document).ready(function(){
 					editor_Text = editor_Text.replace(title[0], "");
 				}
 			}
+
+			try {
+				// Try to print Markdown Parsed Document
+				_print(marked(editor_Text));
+			}
+			catch(err) {
+				// Fall back to printing plain text
+				_print(editor_Text);
+			}
 			
-			var converter = new Markdown.Converter();
-			var markdown_HTML = converter.makeHtml(editor_Text);
-			var iframe = document.createElement("iframe");
-			iframe.srcdoc = markdown_HTML;
-			iframe.width = iframe.height = 1;
-			iframe.style.display = "none";
-			$("body").append(iframe);
-			setTimeout(function() {
-				iframe.contentWindow.print();
-				setTimeout(function() {
-					iframe.remove();
-				});
-			});
 		},
 		readOnly: true
 	});
@@ -188,29 +184,6 @@ $(document).ready(function(){
 	});
 	
 	editor.commands.addCommand({
-		name: 'Show Help',
-		bindKey: {win: 'Ctrl-/',  mac: 'Command-/'},
-		exec: function(editor) {
-
-        var screenWidth = screen.availWidth;
-	      var screenHeight = screen.availHeight;
-	      var width = screenWidth / 1.5;
-	      var height = screenHeight / 1.5;
-	
-				chrome.app.window.create('instructions.html', {
-  		    bounds: {
-  			    width: Math.round(width),
-  			    height: Math.round(height),
-  			    left: Math.round((screenWidth - width) / 2),
-  			    top: Math.round((screenHeight - height) / 2)
-  		    }
-	      });
-			
-		},
-		readOnly: true
-	});
-
-	editor.commands.addCommand({
 		name: 'Toggle Insert/Overwrite',
 		bindKey: {win: 'Ctrl-I',  mac: 'Command-I'},
 		exec: function(editor) {
@@ -220,10 +193,109 @@ $(document).ready(function(){
 		},
 		readOnly: true
 	});
+	
+	editor.commands.addCommand({
+		name: 'Show Help',
+		bindKey: {win: 'Ctrl-/',  mac: 'Command-/'},
+		exec: function(editor) {
 
+			openWindow("pages/help.html?path=/documentation/INSTRUCTIONS.md");
+			
+		},
+		readOnly: true
+	});
+
+	editor.commands.addCommand({
+		name: 'List Foreign Characters',
+		bindKey: {win: 'Ctrl-Shift-/',  mac: 'Command-Shift-/'},
+		exec: function(editor) {
+
+			openWindow("pages/help.html?path=/documentation/CHARACTERS.md");
+
+		},
+		readOnly: true
+	});
+	
+	editor.commands.addCommand({
+		name: 'Insert Common Foreign Characters',
+		bindKey: {win: 'Ctrl-Q',  mac: 'Command-Q'},
+		exec: function(editor) {
+
+			editor.insert("é è à ù â ê î ô û ë ï ç   ä Ä ö Ö ü Ü ß   í ó ú ñ ¡ ¿");
+
+		},
+		readOnly: true
+	});
+	
+	editor.commands.addCommand({
+		name: 'Insert Example Markdown',
+		bindKey: {win: 'Ctrl-T',  mac: 'Command-T'},
+		exec: function(editor) {
+
+			request("/documentation/EXAMPLE.md").then(function(value) {
+				editor.insert(value);
+			});
+
+		},
+		readOnly: true
+	});
+	
 	focus();
 
 });
+
+function openWindow(path) {
+	var screenWidth = screen.availWidth;
+	var screenHeight = screen.availHeight;
+	var width = screenWidth / 1.5;
+	var height = screenHeight / 1.5;
+	
+	chrome.app.window.create(path, {
+		bounds: {
+			width: Math.round(width),
+			height: Math.round(height),
+			left: Math.round((screenWidth - width) / 2),
+			top: Math.round((screenHeight - height) / 2)
+		}
+	});
+}
+
+function _closePrint () {
+  document.body.removeChild(this.__container__);
+}
+
+function _setPrint () {
+  this.contentWindow.__container__ = this;
+  this.contentWindow.onbeforeunload = _closePrint;
+  this.contentWindow.onafterprint = _closePrint;
+  this.contentWindow.print();
+}
+
+function _print(html) {
+  var _frame = document.createElement("iframe");
+  _frame.onload = _setPrint;
+  _frame.style.visibility = "hidden";
+  _frame.style.position = "fixed";
+  _frame.style.right = "0";
+  _frame.style.bottom = "0";
+  _frame.srcdoc = html;
+  document.body.appendChild(_frame);
+}
+
+function print(html) {
+	var iframe = document.createElement("iframe");
+	iframe.srcdoc = html;
+	iframe.width = iframe.height = 1;
+	iframe.style.display = "none";
+
+	$("body").append(iframe);
+	setTimeout(function() {
+		iframe.contentWindow.print();
+		setTimeout(function() {
+			iframe.remove();
+		});
+	});
+}
 
 function focus() {
 	var editor = ace.edit("editor");

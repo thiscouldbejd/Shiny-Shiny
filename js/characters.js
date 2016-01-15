@@ -9,7 +9,7 @@ $(document).ready(function(){
     }
   });
 
-	request("/documentation/INSTRUCTIONS.md").then(function(value) {
+	request("/documentation/CHARACTERS.md").then(function(value) {
     $("#content").append(marked(value));
 	});
 	

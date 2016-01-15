@@ -5,7 +5,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
 	var width = screenWidth / 1.5;
 	var height = screenHeight / 1.5;
 
-	chrome.app.window.create('window.html', {
+	chrome.app.window.create("pages/window.html", {
 		bounds: {
 			width: Math.round(width),
 			height: Math.round(height),
