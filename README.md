@@ -6,7 +6,7 @@ Shiny! Shiny! is a very simple text authoring app for Chrome. It is designed aro
 It has a number of simple features (saving, opening, printing) that are detailed in the INSTRUCTIONS file (available from the App by pressing 'CTRL-?|/').
 
 ##Usage
-You can download the code yourself for modification/testing/usage/debugging or grab it from the [Google Web Store](https://chrome.google.com/webstore/).
+You can download the code yourself for modification/testing/usage/debugging or grab it from the [Google Web Store](https://chrome.google.com/webstore/detail/shiny-shiny/ihigondjldgbcfcaabmplodljjliedaf).
 
 ##Naming
 Ironically named for it's minimalistic approach. Sometimes simple solutions are best.
