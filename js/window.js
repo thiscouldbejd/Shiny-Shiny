@@ -14,6 +14,9 @@ var markdown_Mode = "ace/mode/markdown";
 var text_Mode = "ace/mode/plain_text";
 var default_Mode = markdown_Mode;
 
+// -- File --
+var fileSaveId;
+
 $(document).ready(function(){
 
 	var editor = ace.edit("editor");
@@ -33,14 +36,38 @@ $(document).ready(function(){
 			var _config = {type: 'saveFile', suggestedName: 'output.txt', accepts: _accepts};
 
 			chrome.fileSystem.chooseEntry(_config, function(writableEntry) {
-				var blob = new Blob([editor.getValue()], {type: 'text/plain'});
-				writeFileEntry(writableEntry, blob, function(e) {
-					console.log('Write complete :)');
-					focus();
-				});
+				if (!chrome.runtime.lastError) {
+					fileSaveId = chrome.fileSystem.retainEntry(writableEntry);
+					var blob = new Blob([editor.getValue()], {type: 'text/plain'});
+					writeFileEntry(writableEntry, blob, function(e) {
+						focus();
+					});
+				}
 			});
+			if (chrome.runtime.lastError) {} else {}
 			// -- Stolen from Google Chrome 'filesystem-access' Sample --
 
+		},
+		readOnly: true
+	});
+	
+	editor.commands.addCommand({
+		name: 'Save Silently',
+		bindKey: {win: 'Ctrl-Shift-S',  mac: 'Command-Shift-S'},
+		exec: function(editor) {
+
+			if (fileSaveId) {
+				chrome.fileSystem.isRestorable(fileSaveId, function(isRestorable) {
+					if (isRestorable) {
+						chrome.fileSystem.restoreEntry(fileSaveId, function(writableEntry) {
+							var blob = new Blob([editor.getValue()], {type: 'text/plain'});
+							writeFileEntry(writableEntry, blob, function(e) {
+								focus();
+							});
+						});
+					}
+				});
+			}
 		},
 		readOnly: true
 	});

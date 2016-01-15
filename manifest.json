@@ -15,7 +15,7 @@
 	"offline_enabled" : true,
 	"kiosk_enabled" : true,
 	"permissions" : [
-		{"fileSystem" : ["write", "retainEntries", "directory"]},
+		{"fileSystem" : ["write", "directory"]},
 		"storage"
 	],
 	"file_handlers" : {

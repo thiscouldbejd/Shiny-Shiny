@@ -6,6 +6,7 @@ Displaying these Instructions
 Instructions
 ============
 - Press '__CTRL S__' to save your work to a USB key or similar ('__CTRL SHIFT O__' to open)
+- Once you have saved it once (in a session), press '__CTRL SHIFT S__' to overwrite the saved version with the current version (it won't warn you!)
 - To INCREASE the screen font size, press '__CTRL +__' 
 - To REDUCE the screen font size, press '__CTRL -__'
 - To restore the DEFAULT screen font size, press '__CTRL 0__'
