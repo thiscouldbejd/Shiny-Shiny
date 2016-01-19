@@ -3,7 +3,7 @@
 ##Overview
 Shiny! Shiny! is a very simple text authoring app for Chrome. It is designed around the '[Ace](https://ace.c9.io)' editor. It is ideal for use in educational environments (e.g. Exams) where a full screen text editor is required, without the distraction of a web-browser (when used in 'kiosk' mode).
 
-It has a number of simple features (saving, opening, printing) that are detailed in the INSTRUCTIONS file (available from the App by pressing 'CTRL-?|/').
+It has a number of simple features (saving, opening, printing) that are detailed in the INSTRUCTIONS file (available from the App by pressing '__CTRL-?__').
 
 ##Usage
 You can download the code yourself for modification/testing/usage/debugging or grab it from the [Google Web Store](https://chrome.google.com/webstore/detail/shiny-shiny/ihigondjldgbcfcaabmplodljjliedaf).

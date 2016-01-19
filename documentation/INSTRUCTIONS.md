@@ -31,5 +31,5 @@ Styling Instructions
 
 International & Special Characters
 ==================================
-- For a list of all international and special characters (together with their codes) press '__CTRL SHIFT /__'
-- Press '__CTRL /__' or '__ESC__' to close the special characters
+- For a list of all international and special characters (together with their codes) press '__CTRL SHIFT ?__'
+- Press '__CTRL SHIFT ?__', '__CTRL ?__' or '__ESC__' to close the special characters
