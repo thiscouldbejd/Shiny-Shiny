@@ -2,6 +2,11 @@ var chosenEntry = null;
 
 // -- Fonts --
 var default_FontSize = 18;
+var default_FontSizeDelta = 1;
+
+// -- Line Spacing/Height --
+var default_LineHeight = 1;
+var default_LineHeightDelta = 0.2;
 
 // -- Themes --
 var dark_Theme = "ace/theme/twilight";
@@ -154,7 +159,7 @@ $(document).ready(function(){
 
 			// -- Stolen from Ace 'kitchen-sink' Sample --
 			var size = parseInt(editor.getFontSize(), 10) || default_FontSize;
-			editor.setFontSize(size + 1);
+			editor.setFontSize(size + default_FontSizeDelta);
 			// -- Stolen from Ace 'kitchen-sink' Sample --
 
 		},
@@ -168,7 +173,7 @@ $(document).ready(function(){
 
 			// -- Stolen from Ace 'kitchen-sink' Sample --
 			var size = parseInt(editor.getFontSize(), 10) || default_FontSize;
-			editor.setFontSize(Math.max(size - 1 || 1));
+			editor.setFontSize(Math.max(size - default_FontSizeDelta || 1));
 			// -- Stolen from Ace 'kitchen-sink' Sample --
 			
 		},
@@ -183,6 +188,41 @@ $(document).ready(function(){
 			// -- Stolen from Ace 'kitchen-sink' Sample --
 			editor.setFontSize(default_FontSize);
 			// -- Stolen from Ace 'kitchen-sink' Sample --
+			
+		},
+		readOnly: true
+	});
+	
+	editor.commands.addCommand({
+		name: 'Increase Line Spacing/Height',
+		bindKey: {win: 'Ctrl+9', mac: 'Command+9'},
+		exec: function(editor) {
+
+			var size = parseFloat(editor.container.style.lineHeight, 10) || default_LineHeight;
+			editor.container.style.lineHeight = size + default_LineHeightDelta;
+
+		},
+		readOnly: true
+	});
+
+	editor.commands.addCommand({
+		name: 'Decrease Line Spacing/Height',
+		bindKey: {win: 'Ctrl+8',  mac: 'Command+8'},
+		exec: function(editor) {
+
+			var size = parseFloat(editor.container.style.lineHeight, 10) || default_LineHeight;
+			editor.container.style.lineHeight = Math.max(size - default_LineHeightDelta || default_LineHeight);
+			
+		},
+		readOnly: true
+	});
+
+	editor.commands.addCommand({
+		name: 'Reset Line Spacing/Height',
+		bindKey: {win: 'Ctrl+7',  mac: 'Command+7'},
+		exec: function(editor) {
+
+            editor.container.style.lineHeight = default_LineHeight;
 			
 		},
 		readOnly: true
