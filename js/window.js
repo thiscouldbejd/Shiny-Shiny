@@ -13,7 +13,6 @@ var dark_Theme = "ace/theme/twilight";
 var light_Theme = "ace/theme/tomorrow";
 var default_Theme = light_Theme;
 
-
 // -- Modes --
 var markdown_Mode = "ace/mode/markdown";
 var text_Mode = "ace/mode/plain_text";
@@ -21,6 +20,320 @@ var default_Mode = markdown_Mode;
 
 // -- File --
 var fileSaveId;
+
+// -- Line Number / Page Markers //
+var lineNumbers = ".ace_gutter .ace_gutter-cell";
+
+// -- Internal Functions -- //
+
+function openWindow(path) {
+	var screenWidth = screen.availWidth;
+	var screenHeight = screen.availHeight;
+	var width = screenWidth / 1.5;
+	var height = screenHeight / 1.5;
+	
+	chrome.app.window.create(path, {
+		bounds: {
+			width: Math.round(width),
+			height: Math.round(height),
+			left: Math.round((screenWidth - width) / 2),
+			top: Math.round((screenHeight - height) / 2)
+		}
+	});
+}
+
+function _closePrint () {
+  document.body.removeChild(this.__container__);
+}
+
+function _setPrint(css) {
+    
+	return function() {
+		
+		if (css) {
+			var head = this.contentDocument.head || this.contentDocument.getElementsByTagName('head')[0],
+				style = this.contentDocument.createElement('style');
+
+			style.type = "text/css";
+			if (style.styleSheet){
+				style.styleSheet.cssText = css;
+			} else {
+				style.appendChild(this.contentDocument.createTextNode(css));
+			}
+
+			head.appendChild(style);
+		}
+	
+		this.contentWindow.__container__ = this;
+  	this.contentWindow.onbeforeunload = _closePrint;
+  	this.contentWindow.onafterprint = _closePrint;
+  	this.contentWindow.print();
+		
+	}
+  
+}
+
+function _printHtml(html, css) {
+
+  var _frame = document.createElement("iframe");
+  _frame.onload = _setPrint(css);
+  _frame.style.visibility = "hidden";
+  _frame.style.position = "fixed";
+  _frame.style.right = "0";
+  _frame.style.bottom = "0";
+  
+  _frame.srcdoc = html;
+  
+  document.body.appendChild(_frame);
+}
+
+function _print(text, extra_Formatting, strict) {
+	
+	if (text) {
+		var title = text.match(new RegExp("^\@.+\@"));
+		if (title && title.length == 1) {
+			document.title = title[0].slice(1, title[0].length - 1);
+			text = text.replace(title[0], "");
+		}
+	}
+
+	var css = extra_Formatting ?
+			[
+				"body {font-size: 12pt !important;}",
+			 	"body p, body li {line-height: 2;}",
+				"body > table:first-child > thead {display: table-header-group; color: #888;}",
+        "body > table:first-child > thead ul li {line-height: 1.2 !important;}",
+				"body > table:first-child > tfoot {display: table-footer-group; color: #888;}"
+		].join(" ") : false;
+	
+	try {
+		
+    if (!strict) {
+      
+      // If not strict, try to clean up common mistakes
+      var _regexes = [
+        {
+          match: /^[0-9]+(\.{1})\s/mig,  // Match dots after numerical line starts, which will be parsed as OL > LI
+          replace: function(match, p1) {
+            var _reversed =  match.split("").reverse().join("");
+            var _replaced = _reversed.replace(p1, ". ");
+            var _return = _replaced.split("").reverse().join("");
+            return _return;
+         	}
+        },
+      ];
+      
+      $.each(_regexes, function(i, regex) {
+        text = text.replace(regex.match, regex.replace)
+      });
+    }
+    
+		// Try to print Markdown Parsed Document
+		var converter = new showdown.Converter({tables: true});
+		var html = converter.makeHtml(text);
+		
+		if (extra_Formatting) {
+		    
+		    var _nodes = $.parseHTML(html), _headers = [], _content = [];
+ 
+            $.each(_nodes, function(i, el) {
+
+                if (el.nodeName !== "META" && !(el.nodeName == "#text" && !el.textContent.trim())) {
+                    
+                    if (_content.length === 0 && (el.nodeName == "HR" || el.nodeName == "UL")) {
+                        
+                        _headers.push(el);
+                        
+                    } else {
+                        
+                        _content.push(el);
+                        
+                    }
+                    
+                }
+                
+            });
+ 
+            if (_headers.length === 3) {
+                
+                var _html = ["<table>","<thead>","<tr>","<td>"];
+                $.each(_headers, function(i, el) {
+                    _html.push(el.outerHTML);
+                });
+                _html = _html.concat(["</td>", "</tr>", "</thead>", "<tbody>", "<tr>", "<td>"]);
+                $.each(_content, function(i, el) {
+                    _html.push(el.outerHTML);
+                });
+                _html = _html.concat(["</td>", "</tr>", "</tbody>", "<table>"]);
+                html = _html.join("\n");
+                
+            }
+
+		}
+    
+		_printHtml(html, css);
+		
+	} catch(err) {
+			console.error(err);
+		// Fall back to printing plain text
+		_printHtml(text, css);
+	}
+	
+}
+
+function focus() {
+	var editor = ace.edit("editor");
+	editor.focus();
+}
+
+// -- From Google Chrome 'filesystem-access' Sample --
+function errorHandler(e) {
+	console.error(e);
+}
+
+function writeFileEntry(writableEntry, opt_blob, callback) {
+
+	if (!writableEntry) {
+		return;
+	}
+
+	writableEntry.createWriter(function(writer) {
+
+		writer.onerror = errorHandler;
+		writer.onwriteend = callback;
+
+		// If we have data, write it to the file. Otherwise, just use the file we loaded.
+		if (opt_blob) {
+
+			writer.truncate(opt_blob.size);
+			waitForIO(writer, function() {
+				writer.seek(0);
+				writer.write(opt_blob);
+			});
+
+		} else {
+
+			chosenEntry.file(function(file) {
+				writer.truncate(file.fileSize);
+				waitForIO(writer, function() {
+					writer.seek(0);
+					writer.write(file);
+				});
+			});
+		}
+	}, errorHandler);
+}
+
+function loadFileEntry(_chosenEntry) {
+	chosenEntry = _chosenEntry;
+	chosenEntry.file(function(file) {
+		readAsText(chosenEntry, function(result) {
+			var editor = ace.edit("editor");
+			editor.insert(result);
+		});
+	});
+}
+
+function readAsText(fileEntry, callback) {
+	fileEntry.file(function(file) {
+		var reader = new FileReader();
+
+		reader.onerror = errorHandler;
+		reader.onload = function(e) {
+			callback(e.target.result);
+		};
+
+		reader.readAsText(file);
+	});
+}
+
+function waitForIO(writer, callback) {
+
+	// set a watchdog to avoid eventual locking:
+	var start = Date.now();
+	// wait for a few seconds
+	var reentrant = function() {
+		if (writer.readyState===writer.WRITING && Date.now()-start<4000) {
+			setTimeout(reentrant, 100);
+			return;
+		}
+		if (writer.readyState===writer.WRITING) {
+			console.error("Write operation taking too long, aborting! (current writer readyState is " + writer.readyState + ")");
+			writer.abort();
+		} else {
+			callback();
+		}
+	};
+	setTimeout(reentrant, 100);
+
+}
+// -- From Google Chrome 'filesystem-access' Sample --
+
+
+// -- From StackOverflow [http://stackoverflow.com/questions/6157929/how-to-simulate-mouse-click-using-javascript] --
+var eventMatchers = {
+    'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
+    'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
+};
+
+var defaultOptions = {
+    pointerX: 0,
+    pointerY: 0,
+    button: 0,
+    ctrlKey: false,
+    altKey: false,
+    shiftKey: false,
+    metaKey: false,
+    bubbles: true,
+    cancelable: true
+};
+
+function simulate(element, eventName) {
+    var options = extend(defaultOptions, arguments[2] || {});
+    var oEvent, eventType = null;
+
+    for (var name in eventMatchers)
+    {
+        if (eventMatchers[name].test(eventName)) { eventType = name; break; }
+    }
+
+    if (!eventType)
+        throw new SyntaxError('Only HTMLEvents and MouseEvents interfaces are supported');
+
+    if (document.createEvent)
+    {
+        oEvent = document.createEvent(eventType);
+        if (eventType == 'HTMLEvents')
+        {
+            oEvent.initEvent(eventName, options.bubbles, options.cancelable);
+        }
+        else
+        {
+            oEvent.initMouseEvent(eventName, options.bubbles, options.cancelable, document.defaultView,
+            options.button, options.pointerX, options.pointerY, options.pointerX, options.pointerY,
+            options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, options.button, element);
+        }
+        element.dispatchEvent(oEvent);
+    }
+    else
+    {
+        options.clientX = options.pointerX;
+        options.clientY = options.pointerY;
+        var evt = document.createEventObject();
+        oEvent = extend(evt, options);
+        element.fireEvent('on' + eventName, oEvent);
+    }
+    return element;
+}
+
+function extend(destination, source) {
+    for (var property in source)
+      destination[property] = source[property];
+    return destination;
+}
+// -- From StackOverflow [http://stackoverflow.com/questions/6157929/how-to-simulate-mouse-click-using-javascript] --
+
+// -- Internal Functions -- //
 
 $(document).ready(function(){
 
@@ -103,23 +416,29 @@ $(document).ready(function(){
 		bindKey: {win: 'Ctrl-P',  mac: 'Command-P'},
 		exec: function(editor) {
 			
-			var editor_Text = editor.getSession().getValue();
-			if (editor_Text) {
-				var title = editor_Text.match(new RegExp("^\@.+\@"));
-				if (title && title.length == 1) {
-					document.title = title[0].slice(1, title[0].length - 1);
-					editor_Text = editor_Text.replace(title[0], "");
-				}
-			}
-
-			try {
-				// Try to print Markdown Parsed Document
-				_print(marked(editor_Text));
-			}
-			catch(err) {
-				// Fall back to printing plain text
-				_print(editor_Text);
-			}
+			_print(editor.getSession().getValue(), true);
+			
+		},
+		readOnly: true
+	});
+	
+	editor.commands.addCommand({
+		name: 'Print Locally (no extra formatting) (using Markdown)',
+		bindKey: {win: 'Ctrl-Shift-P',  mac: 'Command-Shift-P'},
+		exec: function(editor) {
+			
+			_print(editor.getSession().getValue(), false);
+			
+		},
+		readOnly: true
+	});
+  
+  	editor.commands.addCommand({
+		name: 'Print Locally (using Strict Markdown)',
+		bindKey: {win: 'Ctrl-Alt-P',  mac: 'Command-Alt-P'},
+		exec: function(editor) {
+			
+			_print(editor.getSession().getValue(), true, true);
 			
 		},
 		readOnly: true
@@ -296,7 +615,7 @@ $(document).ready(function(){
 	
 	editor.commands.addCommand({
 		name: 'Insert Example Markdown',
-		bindKey: {win: 'Ctrl-T',  mac: 'Command-T'},
+		bindKey: {win: 'Ctrl-Shift-T',  mac: 'Command-Shift-T'},
 		exec: function(editor) {
 
 			request("/documentation/EXAMPLE.md").then(function(value) {
@@ -307,212 +626,19 @@ $(document).ready(function(){
 		readOnly: true
 	});
 	
+	editor.commands.addCommand({
+		name: 'Insert Template',
+		bindKey: {win: 'Ctrl-T',  mac: 'Command-T'},
+		exec: function(editor) {
+
+			request("/templates/UK-EXAM.md").then(function(value) {
+				editor.insert(value);
+			});
+
+		},
+		readOnly: true
+	});
+	
 	focus();
 
 });
-
-function openWindow(path) {
-	var screenWidth = screen.availWidth;
-	var screenHeight = screen.availHeight;
-	var width = screenWidth / 1.5;
-	var height = screenHeight / 1.5;
-	
-	chrome.app.window.create(path, {
-		bounds: {
-			width: Math.round(width),
-			height: Math.round(height),
-			left: Math.round((screenWidth - width) / 2),
-			top: Math.round((screenHeight - height) / 2)
-		}
-	});
-}
-
-function _closePrint () {
-  document.body.removeChild(this.__container__);
-}
-
-function _setPrint () {
-  this.contentWindow.__container__ = this;
-  this.contentWindow.onbeforeunload = _closePrint;
-  this.contentWindow.onafterprint = _closePrint;
-  this.contentWindow.print();
-}
-
-function _print(html) {
-  var _frame = document.createElement("iframe");
-  _frame.onload = _setPrint;
-  _frame.style.visibility = "hidden";
-  _frame.style.position = "fixed";
-  _frame.style.right = "0";
-  _frame.style.bottom = "0";
-  _frame.srcdoc = html;
-  document.body.appendChild(_frame);
-}
-
-function print(html) {
-	var iframe = document.createElement("iframe");
-	iframe.srcdoc = html;
-	iframe.width = iframe.height = 1;
-	iframe.style.display = "none";
-
-	$("body").append(iframe);
-	setTimeout(function() {
-		iframe.contentWindow.print();
-		setTimeout(function() {
-			iframe.remove();
-		});
-	});
-}
-
-function focus() {
-	var editor = ace.edit("editor");
-	editor.focus();
-}
-
-// -- Stolen from Google Chrome 'filesystem-access' Sample --
-function errorHandler(e) {
-	console.error(e);
-}
-
-function writeFileEntry(writableEntry, opt_blob, callback) {
-
-	if (!writableEntry) {
-		return;
-	}
-
-	writableEntry.createWriter(function(writer) {
-
-		writer.onerror = errorHandler;
-		writer.onwriteend = callback;
-
-		// If we have data, write it to the file. Otherwise, just use the file we loaded.
-		if (opt_blob) {
-
-			writer.truncate(opt_blob.size);
-			waitForIO(writer, function() {
-				writer.seek(0);
-				writer.write(opt_blob);
-			});
-
-		} else {
-
-			chosenEntry.file(function(file) {
-				writer.truncate(file.fileSize);
-				waitForIO(writer, function() {
-					writer.seek(0);
-					writer.write(file);
-				});
-			});
-		}
-	}, errorHandler);
-}
-
-function loadFileEntry(_chosenEntry) {
-	chosenEntry = _chosenEntry;
-	chosenEntry.file(function(file) {
-		readAsText(chosenEntry, function(result) {
-			var editor = ace.edit("editor");
-			editor.insert(result);
-		});
-	});
-}
-
-function readAsText(fileEntry, callback) {
-	fileEntry.file(function(file) {
-		var reader = new FileReader();
-
-		reader.onerror = errorHandler;
-		reader.onload = function(e) {
-			callback(e.target.result);
-		};
-
-		reader.readAsText(file);
-	});
-}
-
-function waitForIO(writer, callback) {
-
-	// set a watchdog to avoid eventual locking:
-	var start = Date.now();
-	// wait for a few seconds
-	var reentrant = function() {
-		if (writer.readyState===writer.WRITING && Date.now()-start<4000) {
-			setTimeout(reentrant, 100);
-			return;
-		}
-		if (writer.readyState===writer.WRITING) {
-			console.error("Write operation taking too long, aborting! (current writer readyState is " + writer.readyState + ")");
-			writer.abort();
-		} else {
-			callback();
-		}
-	};
-	setTimeout(reentrant, 100);
-
-}
-// -- Stolen from Google Chrome 'filesystem-access' Sample --
-
-
-// -- Stolen from StackOverflow [http://stackoverflow.com/questions/6157929/how-to-simulate-mouse-click-using-javascript] --
-function simulate(element, eventName)
-{
-    var options = extend(defaultOptions, arguments[2] || {});
-    var oEvent, eventType = null;
-
-    for (var name in eventMatchers)
-    {
-        if (eventMatchers[name].test(eventName)) { eventType = name; break; }
-    }
-
-    if (!eventType)
-        throw new SyntaxError('Only HTMLEvents and MouseEvents interfaces are supported');
-
-    if (document.createEvent)
-    {
-        oEvent = document.createEvent(eventType);
-        if (eventType == 'HTMLEvents')
-        {
-            oEvent.initEvent(eventName, options.bubbles, options.cancelable);
-        }
-        else
-        {
-            oEvent.initMouseEvent(eventName, options.bubbles, options.cancelable, document.defaultView,
-            options.button, options.pointerX, options.pointerY, options.pointerX, options.pointerY,
-            options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, options.button, element);
-        }
-        element.dispatchEvent(oEvent);
-    }
-    else
-    {
-        options.clientX = options.pointerX;
-        options.clientY = options.pointerY;
-        var evt = document.createEventObject();
-        oEvent = extend(evt, options);
-        element.fireEvent('on' + eventName, oEvent);
-    }
-    return element;
-}
-
-function extend(destination, source) {
-    for (var property in source)
-      destination[property] = source[property];
-    return destination;
-}
-
-var eventMatchers = {
-    'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
-    'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
-};
-
-var defaultOptions = {
-    pointerX: 0,
-    pointerY: 0,
-    button: 0,
-    ctrlKey: false,
-    altKey: false,
-    shiftKey: false,
-    metaKey: false,
-    bubbles: true,
-    cancelable: true
-};
-// -- Stolen from StackOverflow [http://stackoverflow.com/questions/6157929/how-to-simulate-mouse-click-using-javascript] --

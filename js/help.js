@@ -13,9 +13,17 @@ $(document).ready(function(){
 	// -- Load Body Content -- //
 	var path = querySt("path");
 	if (path) request(path).then(function(value) {
-    $("#content").append(marked(value));
+		var converter = new showdown.Converter({tables: true});
+    $("#content").append(converter.makeHtml(value));
 	});
 	
+  // -- Load Version Info -- //
+  if (chrome && chrome.runtime) {
+    var manifestData = chrome.runtime.getManifest();
+     $("#version").append($("<p />", {text: "Version = " + manifestData.version}));
+		 console.log(manifestData);
+  }
+  
 });
 
 // -- Provides Access to Query String Variables (e.g. debug flags) -- //

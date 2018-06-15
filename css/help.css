@@ -2,3 +2,7 @@ html, body {
 	overflow-y: visible;
 	font-size: 1.1em;
 }
+
+.version {
+  color: #cccccc;
+}

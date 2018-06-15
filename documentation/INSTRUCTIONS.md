@@ -7,13 +7,14 @@ Instructions
 ============
 - Press '__CTRL S__' to save your work to a USB key or similar ('__CTRL SHIFT O__' to open)
 - Once you have saved it once (in a session), press '__CTRL SHIFT S__' to overwrite the saved version with the current version (it won't warn you!)
+- To add a templated header to your exam script, press __CTRL T__ at the start of the page.
 - To INCREASE the screen font size, press '__CTRL +__'
 - To REDUCE the screen font size, press '__CTRL -__'
 - To restore the DEFAULT screen font size, press '__CTRL 0__'
 - To INCREASE the line height/spacing, press '__CTRL 9__'
 - To REDUCE the line height/spacing, press '__CTRL 8__'
 - To restore the DEFAULT line height/spacing, press '__CTRL 7__'
-- To print your work, press '__CTRL P__'
+- To print your work, press '__CTRL P__' (this will print with double line spacing, __CTRL SHIFT P__ will print normally, __CTRL ALT P__ will strictly parse Markdown)
 - If you prefer light text on a dark background, press '__CTRL D__', if you prefer dark text on a light background (default), press '__CTRL L__'
 - To copy text, highlight the text and press '__CTRL C__'
 - To paste text, press '__CTRL V__'
