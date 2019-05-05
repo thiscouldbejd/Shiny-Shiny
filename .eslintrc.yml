@@ -1,0 +1,29 @@
+env:
+  browser: true
+  es6: true
+extends: 'eslint:recommended'
+rules:
+  indent:
+    - off
+    - tab
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - double
+  semi:
+    - error
+    - always
+  no-cond-assign: [1, except-parens]
+  no-const-assign: 1
+  no-useless-escape: 0
+globals:
+  $: false
+  jQuery: false
+  chrome: false
+  ace: false
+  showdown: false
+  request: true
+  writeFileEntry: true
+  loadFileEntry: true

@@ -3,14 +3,16 @@
 	<head>
 		<title>Shiny! Shiny!</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
-		<script type="text/javascript" src="/js/showdown.min.js"></script>
+		<script type="text/javascript" src="/libs/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/libs/showdown.min.js"></script>
 		<script type="text/javascript" src="/js/request.js"></script>
 		<script type="text/javascript" src="/js/help.js"></script>
+    <link rel="stylesheet" media="screen" href="/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" media="screen" type="text/css" href="/css/help.css">
 	</head>
 	<body>
-		<div id="content"></div>
-    <div id="version" class="version"></div>
+    <div class="container-fluid"><div class="row"><div id="content" class="col-sm"></div></div></div>
+    <blockquote id="version" class="blockquote text-right mr-3 version"></blockquote>
 	</body>
 </html>

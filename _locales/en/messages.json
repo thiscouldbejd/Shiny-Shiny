@@ -1,10 +1,26 @@
 {
-  "extensionName": {
-    "message": "Shiny! Shiny! [BETA]",
+  "extensionProductionName": {
+    "message": "Shiny! Shiny!",
     "description": "Extension name."
   },
-  "extensionShortName": {
+  "extensionBetaName": {
+    "message": "Shiny! Shiny! [*BETA*]",
+    "description": "Extension name."
+  },
+  "extensionDebugName": {
+    "message": "Shiny! Shiny! [** DEBUG **]",
+    "description": "Extension name."
+  },
+  "extensionProductionShortName": {
     "message": "Shiny",
+    "description": "Extension short-name."
+  },
+  "extensionBetaShortName": {
+    "message": "*Shiny*",
+    "description": "Extension short-name."
+  },
+  "extensionDebugShortName": {
+    "message": "** Shiny **",
     "description": "Extension short-name."
   },
   "extensionDescription": {

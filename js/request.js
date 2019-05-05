@@ -1,4 +1,4 @@
-// -- Request Promise -- //
+/* exported request */
 var request = function(url) {
   
 	return new Promise(function(resolve, reject) {
@@ -9,7 +9,7 @@ var request = function(url) {
       r.responseType = "json";
     }
 
-		r.open('GET', url, true);
+		r.open("GET", url, true);
 
     r.onload = function() {
 
@@ -40,4 +40,3 @@ var request = function(url) {
   });
 
 };
-// -- Request Promise -- //
