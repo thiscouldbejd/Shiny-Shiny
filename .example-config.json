@@ -1,0 +1,8 @@
+{
+	"SAVE_RECOVERY": {"Value" : true},
+  "SAVE_AUTOSAVE": {"Value" : 5},
+  "PRINT_FONT_SIZE": {"Value" : 14},
+  "PRINT_LINE_HEIGHT": {"Value" : 2},
+	"PRINT_GUTTER_RIGHT": {"Value" : 10},
+	"PRINT_GUTTER_LEFT": {"Value" : 20}
+}

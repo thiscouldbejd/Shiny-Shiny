@@ -95,19 +95,19 @@ var INSERT = {
       editor.insert(value);
     });
   },
-  
+
   count: function(editor) {
     var document = editor.getSession().getDocument(),
-        row = document.getLength(),
-        column = document.getLine(row - 1).length;
-    
+      row = document.getLength(),
+      column = document.getLine(row - 1).length;
+
     editor.gotoLine(row, column, true);
     editor.insert("\n\n@@#WORD_COUNT#@@");
-    
+
     row = document.getLength();
     column = document.getLine(row - 1).length;
     editor.gotoLine(row, column, true);
-	}
+  }
 
 };
 // -- INSERT Commands -- //
@@ -116,36 +116,36 @@ var INSERT = {
 var SAVE = {
 
   auto: function(editor) {
-    
+
     var create = function() {
-      return (STATE.file.id && STATE.file.autosave > 0) ? 
+      return (STATE.file.id && STATE.file.autosave > 0) ?
         setTimeout(function() {
           if (STATE.file.id && STATE.file.autosave > 0) {
-            if (editor.getValue()) {
+            if (editor && editor.getValue()) {
               SAVE.silently(editor, function() {
                 STATE.file.timeout = create();
               });
             } else {
-            	STATE.file.timeout = create();
+              STATE.file.timeout = create();
             }
           }
         }, STATE.file.autosave * 60 * 1000) : 0;
     };
-    
+
     if (STATE.file.timeout !== 0) {
       clearTimeout(STATE.file.timeout);
     }
     STATE.file.timeout = create();
-    
+
   },
-  
+
   complete: function(callback) {
     return function() {
       STATE.file.saved = new Date();
-    	(callback || ACTION.focus)();
-    }
+      (callback || ACTION.focus)();
+    };
   },
-  
+
   initial: function(editor) {
     var _config = {
       type: "saveFile",
@@ -180,18 +180,18 @@ var SAVE = {
       });
     }
   },
-  
+
   recovery: function(editor) {
-    
+
     var timestamp = new Date().toISOString(),
-          filename = "autosave_" + timestamp.split(".")[0] + ".txt";
+      filename = "autosave_" + timestamp.split(".")[0] + ".txt";
 
     var element = document.createElement("a");
-    	element.setAttribute("href", 
-                         "data:text/plain;charset=utf-8," + encodeURIComponent(editor.getValue()));
-    	element.setAttribute("download", filename);
-    	element.click();
-    
+    element.setAttribute("href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(editor.getValue()));
+    element.setAttribute("download", filename);
+    element.click();
+
   }
 
 };
@@ -248,7 +248,7 @@ var PRINT = {
       }
 
       this.contentWindow.__container__ = this;
-      this.contentWindow.onbeforeunload = PRINT.close;
+      // -- this.contentWindow.onbeforeunload = PRINT.close; -- //
       this.contentWindow.onafterprint = PRINT.close;
       this.contentWindow.print();
 
@@ -270,22 +270,22 @@ var PRINT = {
 
   print: function(text, extra_Formatting, strict) {
     if (text) {
-      
-      
-      // == Process Actions == //
-      var pattern = RegExp("^\@\@\#([A-Z_\-]+)\#\@\@$","gm"),
-          match,
-          actions = [];
 
-      var word_Count = text.match(/\S+/g).length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      // == Process Actions == //
+      var pattern = RegExp("^\@\@\#([A-Z_\-]+)\#\@\@$", "gm"),
+        match,
+        actions = [];
+
+      var _words = text.match(/\S+/g);
+      var word_Count = _words ? _words.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
 
       // -- Match Actions -- //
       while ((match = pattern.exec(text))) {
         if (match[1] == "WORD_COUNT") {
-          actions.push((function (m) {
+          actions.push((function(m) {
             return function(text) {
               return text.substr(0, m.index) + "Words: " + word_Count + text.substr(m.index + m[0].length);
-            }
+            };
           })(match));
         }
       }
@@ -296,15 +296,15 @@ var PRINT = {
           text = fn(text);
         });
       }
-      
-      
+
+
       // -- Extract Title -- //
       var title = text.match(new RegExp("^\@.+\@"));
       if (title && title.length == 1) {
         document.title = title[0].slice(1, title[0].length - 1);
         text = text.replace(title[0], "");
       }
-      
+
       // Remove whitespace at the start of lines, to avoid converted to 'pre' elements that overflow the page
       text = text.replace(/^\t+|^ +/gm, "");
     }
@@ -319,7 +319,7 @@ var PRINT = {
         "body > table:first-child > thead {display: table-header-group; color: #888;}",
         "body > table:first-child > thead ul li {line-height: " + STATE.print.line.header + " !important;}",
         "body > table:first-child > tbody {" + (header ? (_header + " display: table;") : "") + "}",
-        "body > table:first-child > tfoot {display: table-footer-group; color: #888;}"
+        "body > table:first-child > tfoot {display: table-footer-group; color: #888; text-align: right;}"
       ].join(" ") : false;
     };
 
@@ -386,7 +386,7 @@ var PRINT = {
           $.each(_content, function(i, el) {
             _html.push(el.outerHTML);
           });
-          _html = _html.concat(["</td>", "</tr>", "</tbody>", "<table>"]);
+          _html = _html.concat(["</td>", "</tr>", "</tbody>", "</table>"]);
           html = _html.join("\n");
 
         }
@@ -404,6 +404,116 @@ var PRINT = {
 };
 // -- PRINT Commands -- //
 
+// -- CONFIGURE Commands -- //
+var CONFIGURE = {
+
+  keys: function() {
+
+    return [{
+        key: "SAVE_RECOVERY",
+        get: function() {
+          return STATE.file.recovery;
+        },
+        set: function(value) {
+          STATE.file.recovery = value;
+        },
+      },
+      {
+        key: "SAVE_AUTOSAVE",
+        get: function() {
+          return STATE.file.autosave;
+        },
+        set: function(value) {
+          STATE.file.autosave = value ? value : 0;
+          SAVE.auto();
+        },
+      },
+      {
+        key: "PRINT_FONT_SIZE",
+        get: function() {
+          return STATE.print.font.size;
+        },
+        set: function(value) {
+          STATE.print.font.size = value;
+        },
+      },
+      {
+        key: "PRINT_LINE_HEIGHT",
+        get: function() {
+          return STATE.print.line.height;
+        },
+        set: function(value) {
+          STATE.print.line.height = value;
+        },
+      },
+      {
+        key: "PRINT_HEADER_LINE_HEIGHT",
+        get: function() {
+          return STATE.print.line.header;
+        },
+        set: function(value) {
+          STATE.print.line.header = value;
+        },
+      },
+      {
+        key: "PRINT_GUTTER_TOP",
+        get: function() {
+          return STATE.print.margins[0];
+        },
+        set: function(value) {
+          STATE.print.margins[0] = value;
+        },
+      },
+      {
+        key: "PRINT_GUTTER_RIGHT",
+        get: function() {
+          return STATE.print.margins[1];
+        },
+        set: function(value) {
+          STATE.print.margins[1] = value;
+        },
+      },
+      {
+        key: "PRINT_GUTTER_BOTTOM",
+        get: function() {
+          return STATE.print.margins[2];
+        },
+        set: function(value) {
+          STATE.print.margins[2] = value;
+        },
+      },
+      {
+        key: "PRINT_GUTTER_LEFT",
+        get: function() {
+          return STATE.print.margins[3];
+        },
+        set: function(value) {
+          STATE.print.margins[3] = value;
+        },
+      },
+    ];
+  },
+
+  managed: function() {
+    CONFIGURE.read("managed");
+  },
+
+  read: function(from) {
+
+    var _storage = chrome.storage[from ? from : "managed"];
+    if (!_storage) return;
+
+    _storage.get(null, function(items) {
+      if (!chrome.runtime.lastError) CONFIGURE.keys().forEach(function(key) {
+        if (items[key.key] !== undefined && items[key.key] !== null) key.set(items[key.key]);
+      });
+    });
+
+  },
+
+};
+// -- CONFIGURE Commands -- //
+
 // -- Startup Function -- //
 $(document).ready(function() {
 
@@ -412,10 +522,13 @@ $(document).ready(function() {
   editor.getSession().setMode(DEFAULTS.mode.markdown);
   editor.getSession().setUseWrapMode(true);
   editor.setFontSize(DEFAULTS.font.size);
+  editor.setShowPrintMargin(false);
   STATE.value = function() {
     return editor.getValue();
   };
 
+  // -- Read Managed Configuration -- //
+  CONFIGURE.managed();
 
   editor.commands.addCommand({
     name: "Show Controls",
@@ -457,7 +570,7 @@ $(document).ready(function() {
           _modal.find("#" + value + "Mode")
             .prop("checked", editor.getTheme() == DEFAULTS.theme[value])
             .on("change", function(e) {
-            	if ($(e.currentTarget).prop("checked")) editor.setTheme(DEFAULTS.theme[value]);
+              if ($(e.currentTarget).prop("checked")) editor.setTheme(DEFAULTS.theme[value]);
             });
         });
 
@@ -488,10 +601,20 @@ $(document).ready(function() {
           .on("click", function() {
             INSERT.header(editor);
           });
-        
+
         _modal.find("#wordCounter")
-        	.on("click", function() {
+          .on("click", function() {
             INSERT.count(editor);
+          });
+
+        _modal.find("#helpGeneral")
+          .on("click", function() {
+            ACTION.open("pages/help.html?path=/documentation/INSTRUCTIONS.md");
+          });
+
+        _modal.find("#helpCharacters")
+          .on("click", function() {
+            ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md");
           });
 
         _modal.find("#extraFormatting")
@@ -534,36 +657,37 @@ $(document).ready(function() {
               STATE.print.margins[index] = $(e.currentTarget).val();
             });
         });
-        
+
         _modal.find("#recovery")
-        	.prop("checked", STATE.file.recovery)
+          .prop("checked", STATE.file.recovery)
           .on("change", function(e) {
             STATE.file.recovery = $(e.currentTarget).prop("checked");
           });
-        
-				_modal.find("#autosave")
-            .val(STATE.file.autosave)
-            .on("change", function(e) {
-              STATE.file.autosave = parseInt($(e.currentTarget).val(), 10);
-          		SAVE.auto(editor);
-            });
-        
+
+        _modal.find("#autosave")
+          .val(STATE.file.autosave)
+          .on("change", function(e) {
+            STATE.file.autosave = parseInt($(e.currentTarget).val(), 10);
+            SAVE.auto(editor);
+          });
+
         _modal.find("#autosaveClear")
-        	.on("click", function() {
+          .on("click", function() {
             _modal.find("#autosave").val(0).trigger("change");
           });
-        
+
         // -- Display Counts -- //
         var _format = /\B(?=(\d{3})+(?!\d))/g,
-        		_lines = editor.getSession().getDocument().getLength().toString().replace(_format, ","),
-            _words = editor.getValue().match(/\S+/g).length.toString().replace(_format, ","),
-						_chars = editor.getValue().length.toString().replace(_format, ",");
-        
+          _lines = editor.getSession().getDocument().getLength().toString().replace(_format, ","),
+          _allWords = editor.getValue().match(/\S+/g),
+          _words = _allWords ? _allWords.length.toString().replace(_format, ",") : 0,
+          _chars = editor.getValue().length.toString().replace(_format, ",");
+
         _modal.find("#lastSaved").text(STATE.file.saved ? STATE.file.saved.toLocaleString() : "Never");
         _modal.find("#lineCount").text(_lines);
         _modal.find("#wordCount").text(_words);
         _modal.find("#characterCount").text(_chars);
-        
+
         // -- Show Modal -- //
         _modal.modal("show");
 
@@ -593,7 +717,7 @@ $(document).ready(function() {
     exec: SAVE.silently,
     readOnly: true
   }); // -- Save Silently -- //
-  
+
   editor.commands.addCommand({
     name: "Save Recovery",
     bindKey: {
@@ -818,7 +942,7 @@ $(document).ready(function() {
     },
     readOnly: true
   }); // -- Dark Mode -- //
-  
+
   editor.commands.addCommand({
     name: "Light Theme",
     bindKey: {
@@ -880,7 +1004,7 @@ $(document).ready(function() {
     exec: INSERT.markdown,
     readOnly: true
   }); // -- Insert Example Markdown -- //
-  
+
   editor.commands.addCommand({
     name: "Insert Word Count",
     bindKey: {
@@ -902,7 +1026,18 @@ $(document).ready(function() {
   }); // -- Insert Header Template -- //
   // -- Insertion Commands -- //
 
-  
+  // -- Extra Commands -- //
+  editor.commands.addCommand({
+    name: "Load Managed Configuration",
+    bindKey: {
+      win: "Ctrl-Shift-M",
+      mac: "Command-Shift-M"
+    },
+    exec: CONFIGURE.managed,
+    readOnly: true
+  }); // -- Extra Commands -- //
+
+
   // -- Focus, ready to go! -- //
   ACTION.focus();
 

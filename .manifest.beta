@@ -2,7 +2,7 @@
 	"name" : "__MSG_extensionBetaName__",
 	"short_name" : "__MSG_extensionBetaShortName__",
 	"description" : "__MSG_extensionDescription__",
-	"version" : "0.6.2",
+	"version" : "0.7.3",
 	"author" : "thiscouldbejd",
 	"default_locale" : "en",
 	"manifest_version" : 2,
@@ -20,8 +20,12 @@
 	"kiosk_enabled" : true,
 	"permissions" : [
 		{"fileSystem" : ["write", "directory"]},
-		"storage"
+		"storage",
+    "power"
 	],
+  "storage" : {
+		"managed_schema" : "schema.json"
+	},
 	"file_handlers" : {
 		"text" : {
 			"types" : [

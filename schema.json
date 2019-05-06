@@ -1,0 +1,73 @@
+{
+	"type": "object",
+	"properties": {
+    "SAVE_RECOVERY": {
+      "title": "Recovery Save",
+      "description": "Automatically save out recovery document on normal app close",
+      "type": "boolean",
+      "default": false
+    },
+    "SAVE_AUTOSAVE": {
+      "title": "Autosave",
+      "description": "Time between autosaves once document has first been saved, 0 = No Autosave",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 60
+    },
+    "PRINT_FONT_SIZE": {
+      "title": "Print Font Size",
+      "description": "",
+      "type": "integer",
+      "default": 12,
+    	"minimum": 6,
+    	"maximum": 32
+    },
+    "PRINT_LINE_HEIGHT": {
+      "title": "Print Line Height",
+      "description": "",
+      "type": "integer",
+      "default": 2,
+      "minimum": 1,
+      "maximum": 5
+    },
+    "PRINT_HEADER_LINE_HEIGHT": {
+      "title": "Print Header Line Height",
+      "description": "",
+      "type": "number",
+      "default": 1.2
+    },
+		"PRINT_GUTTER_TOP": {
+      "title": "Print Gutter (Top)",
+      "description": "",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "PRINT_GUTTER_RIGHT": {
+      "title": "Print Gutter (Right)",
+      "description": "",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "PRINT_GUTTER_BOTTOM": {
+      "title": "Print Gutter (Bottom)",
+      "description": "",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "PRINT_GUTTER_LEFT": {
+      "title": "Print Gutter (Left)",
+      "description": "",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+	}
+}

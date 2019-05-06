@@ -1,4 +1,5 @@
 var SAVE = {
+  
   recovery: function(text) {
     if (text && text.length >= 5) {
       
@@ -11,16 +12,22 @@ var SAVE = {
             element.click();
     }
   }
-}
+  
+};
 
-chrome.app.runtime.onLaunched.addListener(function() {
+chrome.app.runtime.onLaunched.addListener(function(launchData) {
+  
+  // Keep awake in Kiosk Mode;
+  if (launchData && launchData.isKioskSession) {
+    chrome.power.requestKeepAwake("display");
+  }
   
   // Center window on screen.
   var screenWidth = screen.availWidth;
   var screenHeight = screen.availHeight;
   var width = screenWidth / 1.5;
   var height = screenHeight / 1.5;
-
+  
   chrome.app.window.create("pages/window.html", {
     id: "main",
     bounds: {
@@ -31,11 +38,21 @@ chrome.app.runtime.onLaunched.addListener(function() {
     }
   }, function(window) {
     
+    var saved = false,
+				save = function() {
+          if (!saved && window && window.contentWindow && 
+              window.contentWindow.STATE.file.recovery) {
+            saved = true;
+            SAVE.recovery(window.contentWindow.STATE.value());
+          }
+        };
+    
     // -- Handle Window Closure -- //
-    window.onClosed.addListener(function() {
-      if (window.contentWindow && window.contentWindow.STATE.file.recovery)
-        SAVE.recovery(window.contentWindow.STATE.value());
-    });
+    window.onClosed.addListener(save);
+    
+    // -- Handle App Suspend -- //
+    chrome.runtime.onSuspend.addListener(save);
+    
   
   });
   

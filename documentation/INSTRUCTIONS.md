@@ -6,8 +6,8 @@ Instructions
 
 ***
 
-- Pressing _'__ESC__'_ (while editing) will bring up the options, which will also give you access to most of the __settings__ and __commands__ below
-- In the __options__ window, you can set the text/line size (double click to return to the default), as well as setting the print options (such as line space and extra margins)
+- Pressing _'__ESC__'_ (while editing) will bring up __options__, which will also give you access to most of the __settings__ and __commands__ below
+- In the __options__ window, you can set the text/line size (double click to return to the default), as well as setting the print options (such as line spacing and extra margin gutters)
 
 ### Commands
 
@@ -18,7 +18,7 @@ Instructions
 
 ***
 
-- To print your work, press _'__CTRL P__'_ (this will print with double line spacing, _'__CTRL SHIFT P__'_ will print normally, _'__CTRL ALT P__'_ will strictly parse Markdown)
+- To print your work, press _'__CTRL P__'_ (this will print with expanded line spacing, _'__CTRL SHIFT P__'_ will print normally, _'__CTRL ALT P__'_ will strictly parse Markdown)
 
 ##### Editing
 

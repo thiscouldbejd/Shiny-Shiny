@@ -7,15 +7,15 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-2">
         <div class="container-fluid p-0">
-          
+
           <div class="row">
 
             <div class="col-12">
-              
+
               <div class="card mb-1 mb-lg-2">
-              
+
                 <div class="card-header border-bottom-0 d-flex align-items-center">
                   <h5 class="mb-0 d-inline">Display</h5>
                 </div>
@@ -25,7 +25,7 @@
                   <fieldset class="container">
 
                     <div class="row">
-                      
+
                       <!-- Font Size -->
                       <div class="col-12 col-lg-6">
 
@@ -41,13 +41,13 @@
                         <input type="range" class="custom-range" id="lineHeight" min="1" max="10" step="0.2">
 
                       </div>
-                      
+
                     </div>
-                    
+
                     <div class="row">
-                      
+
                       <div class="col-12 align-self-center">
-                      
+
                         <div class="d-flex flex-column flex-wrap flex-md-row align-items-center justify-content-between">
 
                           <!-- Theme Modes -->
@@ -63,66 +63,56 @@
                             <input type="radio" id="lightMode" name="modes" class="custom-control-input">
                             <label class="custom-control-label" for="lightMode">Light</label>
                           </div>
-                          
+
                           <!-- Line Numbers -->
                           <div class="custom-control custom-checkbox mr-2 mt-1">
                             <input id="lineNumbers" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="lineNumbers">Line Numbers</label>	
+                            <label class="custom-control-label" for="lineNumbers">Line Numbers</label>
                           </div>
-                          
+
                           <!-- Markdown -->
                           <div class="custom-control custom-checkbox mr-2 mt-1">
                             <input id="markdownMode" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="markdownMode">Markdown</label>	
+                            <label class="custom-control-label" for="markdownMode">Markdown</label>
                           </div>
 
                           <!-- Overwrite -->
                           <div class="custom-control custom-checkbox mt-1">
                             <input id="overwriteMode" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="overwriteMode">Overwrite</label>	
+                            <label class="custom-control-label" for="overwriteMode">Overwrite</label>
                           </div>
 
                         </div>
 
                       </div>
-                      
+
                     </div>
-                    
+
                   </fieldset>
 
                 </div>
 
-              </div> <!-- Display Card -->
-              
+              </div>
+              <!-- Display Card -->
+
               <div class="card mb-1 mb-lg-2">
-                
+
                 <div class="card-header border-bottom-0 d-flex align-items-center">
                   <h5 class="mb-0 d-inline">Save</h5>
                 </div>
-                
+
                 <div class="card-body p-1 p-lg-2">
 
                   <fieldset class="container">
-                    
-                    <div class="row">
-                      
-                      <div class="col-12 align-self-center">
-                      
-                        <div class="d-flex flex-column flex-wrap flex-md-row align-items-center">
 
-                          <!-- Recovery -->
-                          <div class="form-group col-6">
-                            
-                            <div class="custom-control custom-checkbox mt-1">
-                              <input id="recovery" type="checkbox" class="custom-control-input">
-                              <label class="custom-control-label" for="recovery">Recovery Save?</label>	
-                            </div>
-                            <small class="form-text text-muted">Automatically save recovery version on normal app close</small>
-                            
-                          </div>
-                          
+                    <div class="row">
+
+                      <div class="col-12 align-self-center">
+
+                        <div class="row d-flex flex-column flex-wrap flex-md-row align-items-center">
+
                           <!-- Autosave -->
-                          <div class="form-group col-6">
+                          <div class="form-group col-6 col-lg-4 mb-2">
 
                             <label for="autosave">Autosave (mins | 0 = off)</label>
                             <button id="autosaveClear" type="button" class="close" aria-label="Clear">
@@ -132,50 +122,60 @@
 
                           </div>
 
+                          <!-- Recovery -->
+                          <div class="form-group col-6 col-lg-3 col-xl-2 mb-2">
+
+                            <div class="custom-control custom-checkbox mt-1">
+                              <input id="recovery" type="checkbox" class="custom-control-input">
+                              <label class="custom-control-label" for="recovery">Recovery Save</label>
+                            </div>
+
+                          </div>
+
+                          <!-- Counts and Stats -->
+                          <div class="col-12 col-lg-5 col-xl-6 align-self-center">
+
+                            <div class="d-flex flex-column flex-wrap flex-md-row align-items-center justify-content-between">
+
+                              <h6 class="d-flex align-items-center text-secondary">Last Saved: <span id="lastSaved" class="ml-2 badge badge-light"></span></h6>
+
+                              <h6 class="d-flex align-items-center ml-1">Words: <span id="wordCount" class="ml-2 badge badge-warning"></span></h6>
+
+                              <h6 class="d-flex align-items-center ml-1">Lines: <span id="lineCount" class="ml-2 badge badge-dark"></span></h6>
+
+                              <h6 class="d-flex align-items-center ml-1">Characters: <span id="characterCount" class="ml-2 badge badge-secondary"></span></h6>
+
+                            </div>
+
+                          </div>
+
                         </div>
 
                       </div>
-                      
+
                     </div>
-                    
-                    <div class="row">
-                      
-                      <div class="col-12 align-self-center">
-                        
-                        <div class="d-flex flex-column flex-wrap flex-md-row align-items-center justify-content-between">
-                        
-                        <h5 class="d-flex align-items-center text-secondary">Last Saved: <span id="lastSaved" class="ml-2 badge badge-light"></span></h5>
-                          
-                        <h5 class="d-flex align-items-center">Words: <span id="wordCount" class="ml-2 badge badge-dark"></span></h5>
-                          
-                        <h5 class="d-flex align-items-center">Lines: <span id="lineCount" class="ml-2 badge badge-dark"></span></h5>
-                          
-                        <h5 class="d-flex align-items-center">Characters: <span id="characterCount" class="ml-2 badge badge-dark"></span></h5>
-                      
-                      </div>
-                    
-                    </div>
-                    
+
                   </fieldset>
 
                 </div>
-                
-              </div> <!-- Save Card -->
-              
+
+              </div>
+              <!-- Save Card -->
+
               <div class="card mb-1 mb-lg-2">
-                
+
                 <div class="card-header border-bottom-0 d-flex align-items-center">
                   <h5 class="mb-0 d-inline">Print</h5>
                 </div>
-                
+
                 <div class="card-body p-1 p-lg-2">
 
                   <fieldset class="container">
-                    
+
                     <div class="row">
 
                       <!-- Line Height -->
-                      <div class="form-group col-6 col-lg-3">
+                      <div class="form-group col-6 col-lg-3 mb-2">
 
                         <label for="printLineHeight">Line Height</label>
                         <input id="printLineHeight" class="form-control" type="number" min="1" max="5" step="0.2">
@@ -183,47 +183,48 @@
                       </div>
 
                       <!-- Table LI Line Height -->
-                      <div class="form-group col-6 col-lg-3">
+                      <div class="form-group col-6 col-lg-3 mb-2">
 
                         <label for="printTableLineHeight">Header Line Height</label>
                         <input id="printTableLineHeight" class="form-control" type="number" min="1" max="3" step="0.1">
 
                       </div>
-                      
+
                       <!-- Print Font Size -->
-                      <div class="form-group col-6 col-lg-3">
+                      <div class="form-group col-6 col-lg-3 mb-2">
 
                         <label for="printFontSize">Font Size (pt)</label>
                         <input id="printFontSize" class="form-control" type="number" min="6" max="32" step="1">
 
                       </div>
-                      
+
                       <!-- Extra Formatting -->
                       <div class="col-6 col-lg-3">
-                        
+
                         <div class="d-flex flex-wrap flex-row flex-lg-column">
-                          
+
                           <div class="custom-control custom-checkbox mr-2 mt-1">
                             <input id="extraFormatting" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="extraFormatting">Format</label>	
+                            <label class="custom-control-label" for="extraFormatting">Format</label>
                           </div>
 
                           <!-- Strict Parsing -->
                           <div class="custom-control custom-checkbox mr-2 mt-1">
                             <input id="strictParsing" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="strictParsing">Strict</label>	
+                            <label class="custom-control-label" for="strictParsing">Strict</label>
                           </div>
-                          
+
                         </div>
-                        
+
                       </div>
-                      
-                    </div> <!-- Line Heights -->
-                    
+
+                    </div>
+                    <!-- Line Heights -->
+
                     <div class="row">
-                      
+
                       <!-- Margin [LEFT] -->
-                      <div class="form-group col-6 col-md-3">
+                      <div class="form-group col-6 col-md-3 mb-2">
 
                         <label for="printMarginLeft"><strong>Gutter</strong> Left (mm)</label>
                         <input id="printMarginLeft" class="form-control" type="number" min="0" max="100" step="5">
@@ -231,7 +232,7 @@
                       </div>
 
                       <!-- Margin [RIGHT] -->
-                      <div class="form-group col-6 col-md-3">
+                      <div class="form-group col-6 col-md-3 mb-2">
 
                         <label for="printMarginRight">Right</label>
                         <input id="printMarginRight" class="form-control" type="number" min="0" max="100" step="5">
@@ -239,7 +240,7 @@
                       </div>
 
                       <!-- Margin [TOP] -->
-                      <div class="form-group col-6 col-md-3">
+                      <div class="form-group col-6 col-md-3 mb-2">
 
                         <label for="printMarginTop">Top</label>
                         <input id="printMarginTop" class="form-control" type="number" min="0" max="100" step="5">
@@ -247,40 +248,49 @@
                       </div>
 
                       <!-- Margin [BOTTOM] -->
-                      <div class="form-group col-6 col-md-3">
+                      <div class="form-group col-6 col-md-3 mb-2">
 
                         <label for="printMarginBottom">Bottom</label>
                         <input id="printMarginBottom" class="form-control" type="number" min="0" max="100" step="5">
 
                       </div>
-                      
-                    </div> <!-- Margins -->
-                    
+
+                    </div>
+                    <!-- Margins -->
+
                   </fieldset>
 
                 </div>
-                
-                
-              </div> <!-- Print Options Card -->
-              
+
+
+              </div>
+              <!-- Print Options Card -->
+
             </div>
-          
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="btn-group dropup">
-          <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insert</button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" id="headerTemplate" href="#">Header</a>
-            <a class="dropdown-item" id="wordCounter" href="#">Word Count</a>
-            <a class="dropdown-item" id="commonCharacters" href="#">International Characters</a>
-            <a class="dropdown-item" id="exampleMarkdown" href="#">Example Markdown</a>
+
           </div>
         </div>
-        <button id="save" type="button" class="btn btn-dark">Save File</button>
-        <button id="print" type="button" class="btn btn-primary">Print</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+        <div class="modal-footer">
+          <div class="btn-group dropup">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" id="helpGeneral" href="#" data-dismiss="modal">Instructions</a>
+              <a class="dropdown-item" id="helpCharacters" href="#" data-dismiss="modal">All Characters</a>
+            </div>
+          </div>
+          <div class="btn-group dropup">
+            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insert</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" id="headerTemplate" href="#">Header</a>
+              <a class="dropdown-item" id="wordCounter" href="#">Word Count</a>
+              <a class="dropdown-item" id="commonCharacters" href="#">International Characters</a>
+              <a class="dropdown-item" id="exampleMarkdown" href="#">Example Markdown</a>
+            </div>
+          </div>
+          <button id="save" type="button" class="btn btn-dark">Save File</button>
+          <button id="print" type="button" class="btn btn-primary" data-dismiss="modal">Print</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
