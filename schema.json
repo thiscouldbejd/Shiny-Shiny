@@ -23,6 +23,12 @@
     	"minimum": 6,
     	"maximum": 32
     },
+    "PRINT_LINE_BREAKS": {
+      "title": "Print Line Breaks",
+      "description": "Whether line breaks are handled 'simply', by converting each line into a paragraph",
+      "type": "boolean",
+      "default": false
+    },
     "PRINT_LINE_HEIGHT": {
       "title": "Print Line Height",
       "description": "",

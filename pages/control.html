@@ -199,19 +199,14 @@
                       </div>
 
                       <!-- Extra Formatting -->
-                      <div class="col-6 col-lg-3">
+                      <div class="col-6 col-lg-3 d-flex justify-content-around">
 
-                        <div class="d-flex flex-wrap flex-row flex-lg-column">
+                        <div class="d-flex flex-wrap flex-row flex-lg-column align-self-center">
 
+                          <!-- Simple Line Breaks -->
                           <div class="custom-control custom-checkbox mr-2 mt-1">
-                            <input id="extraFormatting" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="extraFormatting">Format</label>
-                          </div>
-
-                          <!-- Strict Parsing -->
-                          <div class="custom-control custom-checkbox mr-2 mt-1">
-                            <input id="strictParsing" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="strictParsing">Strict</label>
+                            <input id="simpleLineBreaks" type="checkbox" class="custom-control-input">
+                            <label class="custom-control-label" for="simpleLineBreaks">Line Breaks</label>
                           </div>
 
                         </div>
@@ -271,6 +266,8 @@
           </div>
         </div>
         <div class="modal-footer">
+          
+          <!-- Help Buttons -->
           <div class="btn-group dropup">
             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</button>
             <div class="dropdown-menu">
@@ -278,6 +275,8 @@
               <a class="dropdown-item" id="helpCharacters" href="#" data-dismiss="modal">All Characters</a>
             </div>
           </div>
+          
+          <!-- Insert Buttons -->
           <div class="btn-group dropup">
             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insert</button>
             <div class="dropdown-menu">
@@ -287,9 +286,27 @@
               <a class="dropdown-item" id="exampleMarkdown" href="#">Example Markdown</a>
             </div>
           </div>
+          
+          <!-- Save Button -->
           <button id="save" type="button" class="btn btn-dark">Save File</button>
-          <button id="print" type="button" class="btn btn-primary" data-dismiss="modal">Print</button>
+          
+          <!-- Print Buttons -->
+          <div class="btn-group dropup">
+            <button id="print" type="button" class="btn btn-primary" data-dismiss="modal">Print</button>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" id="printNormally" href="#" data-dismiss="modal">Normally</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" id="printStrict" href="#" data-dismiss="modal">Strict Parsing</a>
+              <a class="dropdown-item" id="printNoFormatting" href="#" data-dismiss="modal">No Extra Format</a>
+            </div>
+          </div>
+          
+          <!-- Close / Back to Editor Button -->
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+          
         </div>
       </div>
     </div>

@@ -41,6 +41,7 @@ var STATE = {
       size: 12
     },
     line: {
+      breaks: false,
       height: 2,
       header: 1.2
     },
@@ -200,7 +201,7 @@ var SAVE = {
 // -- OPEN Commands -- //
 var OPEN = {
 
-  initial: function() {
+  initial: function(editor) {
 
     var _config = {
       type: "openFile",
@@ -214,7 +215,32 @@ var OPEN = {
       chrome.storage.local.set({
         "chosenFile": chrome.fileSystem.retainEntry(readableEntry)
       });
-      loadFileEntry(readableEntry);
+
+      if (editor && !editor.getValue().trim()) {
+        loadFileEntry(readableEntry, false);
+      } else {
+        request("/pages/open.html").then(function(value) {
+          $("#modal").empty().append(value);
+          var _modal = $("#modal .modal").on("hidden.bs.modal", ACTION.focus);
+
+          _modal.find("#openOverwrite")
+            .on("click", function() {
+              loadFileEntry(readableEntry, true);
+            });
+
+          _modal.find("#openInsert")
+            .on("click", function() {
+              loadFileEntry(readableEntry, false);
+            });
+
+          // -- Show Modal -- //
+          _modal.modal("show");
+
+        });
+
+
+      }
+
       ACTION.focus();
     });
 
@@ -268,7 +294,7 @@ var PRINT = {
     document.body.appendChild(_frame);
   },
 
-  print: function(text, extra_Formatting, strict) {
+  print: function(text, extra_Formatting, strict, lineBreaks) {
     if (text) {
 
       // == Process Actions == //
@@ -305,8 +331,13 @@ var PRINT = {
         text = text.replace(title[0], "");
       }
 
-      // Remove whitespace at the start of lines, to avoid converted to 'pre' elements that overflow the page
+
+      // == General: Clean Up Text == //
+
+      // -- Remove whitespace at the start of lines -- //
+      // -- This avoids it being converted to 'pre' elements that overflow the page and look weird -- //
       text = text.replace(/^\t+|^ +/gm, "");
+
     }
 
     var css = function(header) {
@@ -319,6 +350,8 @@ var PRINT = {
         "body > table:first-child > thead {display: table-header-group; color: #888;}",
         "body > table:first-child > thead ul li {line-height: " + STATE.print.line.header + " !important;}",
         "body > table:first-child > tbody {" + (header ? (_header + " display: table;") : "") + "}",
+        "body > table:first-child > tbody p {max-width: 97vw; word-wrap: break-word;}",
+        "body > table:first-child > tbody pre {white-space: pre-wrap;}",
         "body > table:first-child > tfoot {display: table-footer-group; color: #888; text-align: right;}"
       ].join(" ") : false;
     };
@@ -327,25 +360,33 @@ var PRINT = {
 
       if (!strict) {
 
-        // If not strict, try to clean up common mistakes
-        var _regexes = [{
-          match: /^[0-9]+(\.{1})\s/mig, // Match dots after numerical line starts, which will be parsed as OL > LI
-          replace: function(match, p1) {
-            var _reversed = match.split("").reverse().join("");
-            var _replaced = _reversed.replace(p1, ". ");
-            var _return = _replaced.split("").reverse().join("");
-            return _return;
+        // == Not Strict: Clean Up Common Text Issues == //
+        var _regexes = [
+
+          { // -- Match dots after numerical line starts, which will be parsed as OL > LI -- //
+            match: /^[0-9]+(\.{1})\s/mig,
+            replace: function(match, p1) {
+              var _reversed = match.split("").reverse().join("");
+              var _replaced = _reversed.replace(p1, ". ");
+              var _return = _replaced.split("").reverse().join("");
+              return _return;
+            }
           }
-        }, ];
+
+        ];
 
         $.each(_regexes, function(i, regex) {
           text = text.replace(regex.match, regex.replace);
         });
+
       }
 
       // Try to print Markdown Parsed Document
       var converter = new showdown.Converter({
-        tables: true
+        tables: true,
+        strikethrough: true,
+        disableForced4SpacesIndentedSublists: true,
+        simpleLineBreaks: lineBreaks,
       });
       var html = converter.makeHtml(text),
         _header;
@@ -435,6 +476,15 @@ var CONFIGURE = {
         },
         set: function(value) {
           STATE.print.font.size = value;
+        },
+      },
+      {
+        key: "PRINT_LINE_BREAKS",
+        get: function() {
+          return STATE.print.line.breaks;
+        },
+        set: function(value) {
+          STATE.print.line.breaks = value;
         },
       },
       {
@@ -538,8 +588,8 @@ $(document).ready(function() {
     },
     exec: function(editor) {
       request("/pages/control.html").then(function(value) {
-        $("#settings").empty().append(value);
-        var _modal = $("#settings .modal").on("hidden.bs.modal", ACTION.focus);
+        $("#modal").empty().append(value);
+        var _modal = $("#modal .modal").on("hidden.bs.modal", ACTION.focus);
 
         // -- Set Current Values & Update Handles -- //
         _modal.find("#fontSize")
@@ -617,19 +667,30 @@ $(document).ready(function() {
             ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md");
           });
 
-        _modal.find("#extraFormatting")
-          .prop("checked", true);
+        _modal.find("#simpleLineBreaks")
+          .prop("checked", STATE.print.line.breaks)
+          .on("change", function(e) {
+            STATE.print.line.breaks = $(e.currentTarget).prop("checked");
+          });
 
         _modal.find("#save")
           .on("click", function() {
             SAVE.initial(editor);
           });
 
-        _modal.find("#print")
+        _modal.find("#print, #printNormally")
           .on("click", function() {
-            PRINT.print(editor.getSession().getValue(),
-              $("#extraFormatting").prop("checked"),
-              $("#strictParsing").prop("checked"));
+            PRINT.print(editor.getSession().getValue(), true, false, STATE.print.line.breaks);
+          });
+
+        _modal.find("#printStrict")
+          .on("click", function() {
+            PRINT.print(editor.getSession().getValue(), true, true, STATE.print.line.breaks);
+          });
+
+        _modal.find("#printNoFormatting")
+          .on("click", function() {
+            PRINT.print(editor.getSession().getValue(), false, false, STATE.print.line.breaks);
           });
 
         _modal.find("#printLineHeight")
@@ -751,7 +812,7 @@ $(document).ready(function() {
       mac: "Command-P"
     },
     exec: function(editor) {
-      PRINT.print(editor.getSession().getValue(), true);
+      PRINT.print(editor.getSession().getValue(), true, false, STATE.print.line.breaks);
     },
     readOnly: true
   }); // -- Print -- //
@@ -763,7 +824,7 @@ $(document).ready(function() {
       mac: "Command-Shift-P"
     },
     exec: function(editor) {
-      PRINT.print(editor.getSession().getValue(), false);
+      PRINT.print(editor.getSession().getValue(), false, false, STATE.print.line.breaks);
     },
     readOnly: true
   }); // -- Print without Extra Formatting -- //
@@ -775,7 +836,7 @@ $(document).ready(function() {
       mac: "Command-Alt-P"
     },
     exec: function(editor) {
-      PRINT.print(editor.getSession().getValue(), true, true);
+      PRINT.print(editor.getSession().getValue(), true, true, STATE.print.line.breaks);
     },
     readOnly: true
   }); // -- Print Strict Markdown -- //

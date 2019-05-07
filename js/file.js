@@ -44,12 +44,12 @@ var writeFileEntry = function(writableEntry, opt_blob, callback) {
 };
 
 /* exported loadFileEntry */
-var loadFileEntry = function(_chosenEntry) {
+var loadFileEntry = function(_chosenEntry, clear) {
   chosenEntry = _chosenEntry;
   chosenEntry.file(function() {
     readAsText(chosenEntry, function(result) {
       var editor = ace.edit("editor");
-      editor.insert(result);
+      clear ? editor.setValue(result, 1) : editor.insert(result);
     });
   });
 };
