@@ -50,6 +50,24 @@ var STATE = {
 };
 // -- STATE / Mutable Values -- //
 
+// -- GOTO Commands -- //
+var GOTO = {
+  
+  start: function(editor) {
+    editor.gotoLine(1, 0, true);
+  },
+  
+  end: function(editor) {
+    var document = editor.getSession().getDocument(),
+        row = document.getLength(),
+        column = document.getLine(row - 1).length;
+
+    editor.gotoLine(row, column, true);
+  },
+  
+};
+// -- GOTO Commands -- //
+
 // -- ACTION Commands -- //
 var ACTION = {
 
@@ -92,22 +110,15 @@ var INSERT = {
 
   header: function(editor) {
     request("/templates/UK-EXAM.md").then(function(value) {
-      editor.gotoLine(1, 0, true);
+      GOTO.start(editor);
       editor.insert(value);
     });
   },
 
   count: function(editor) {
-    var document = editor.getSession().getDocument(),
-      row = document.getLength(),
-      column = document.getLine(row - 1).length;
-
-    editor.gotoLine(row, column, true);
+    GOTO.end(editor);
     editor.insert("\n\n@@#WORD_COUNT#@@");
-
-    row = document.getLength();
-    column = document.getLine(row - 1).length;
-    editor.gotoLine(row, column, true);
+		GOTO.end(editor);
   }
 
 };
@@ -341,16 +352,18 @@ var PRINT = {
     }
 
     var css = function(header) {
-      var _header = "margin: " + STATE.print.margins.map(function(margin) {
-        return margin + "mm";
-      }).join(" ") + ";";
+      // -- TOP RIGHT BOTTOM LEFT -- //margin-top, margin-right, margin-bottom, and margin-left
+      var _header = "margin: " + STATE.print.margins.map(function(margin, index) {
+        return margin + (index == 0 || index == 2 ? "mm" : "vw");
+      }).join(" ") + ";",
+          _width = 97 - STATE.print.margins[1] - STATE.print.margins[3];
       return extra_Formatting ? [
         "body {font-size: " + STATE.print.font.size + "pt !important;" + (header ? "" : " " + _header) + "}",
         "body p, body li {line-height: " + STATE.print.line.height + ";}",
         "body > table:first-child > thead {display: table-header-group; color: #888;}",
         "body > table:first-child > thead ul li {line-height: " + STATE.print.line.header + " !important;}",
         "body > table:first-child > tbody {" + (header ? (_header + " display: table;") : "") + "}",
-        "body > table:first-child > tbody p {max-width: 97vw; word-wrap: break-word;}",
+        "body > table:first-child > tbody p {max-width: " + _width + "vw; word-wrap: break-word;}",
         "body > table:first-child > tbody pre {white-space: pre-wrap;}",
         "body > table:first-child > tfoot {display: table-footer-group; color: #888; text-align: right;}"
       ].join(" ") : false;
@@ -867,6 +880,26 @@ $(document).ready(function() {
     },
     readOnly: true
   }); // -- Toggle Insert/Overwrite -- //
+  
+  editor.commands.addCommand({
+    name: "Go to Top",
+    bindKey: {
+      win: "Ctrl-Esc",
+      mac: "Command-Esc"
+    },
+    exec: GOTO.start,
+    readOnly: true
+  }); // -- Go To Top (overrides default close) -- //
+  
+    editor.commands.addCommand({
+    name: "Go to Bottom",
+    bindKey: {
+      win: "Ctrl-Shift-Esc",
+      mac: "Command-Shift-Esc"
+    },
+    exec: GOTO.end,
+    readOnly: true
+  }); // -- Go To Bottom -- //
   // -- Editor Commands -- //
 
 

@@ -45,7 +45,7 @@
     },
 		"PRINT_GUTTER_TOP": {
       "title": "Print Gutter (Top)",
-      "description": "",
+      "description": "Specified in mm, and only applied to the top of the content, e.g. once per document",
       "type": "integer",
       "default": 0,
       "minimum": 0,
@@ -53,7 +53,7 @@
     },
     "PRINT_GUTTER_RIGHT": {
       "title": "Print Gutter (Right)",
-      "description": "",
+      "description": "Specified as a % of the page width, this is applied to the content on every page",
       "type": "integer",
       "default": 0,
       "minimum": 0,
@@ -61,7 +61,7 @@
     },
     "PRINT_GUTTER_BOTTOM": {
       "title": "Print Gutter (Bottom)",
-      "description": "",
+      "description": "Specified in mm, and only applied to the bottom of the content, e.g. once per document",
       "type": "integer",
       "default": 0,
       "minimum": 0,
@@ -69,7 +69,7 @@
     },
     "PRINT_GUTTER_LEFT": {
       "title": "Print Gutter (Left)",
-      "description": "",
+      "description": "Specified as a % of the page width, this is applied to the content on every page",
       "type": "integer",
       "default": 0,
       "minimum": 0,

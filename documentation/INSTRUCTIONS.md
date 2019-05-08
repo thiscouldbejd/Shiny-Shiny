@@ -4,6 +4,9 @@ Instructions
 - Press _'__CTRL ?__'_ to bring up these instructions from within the editor
 - Press _'__CTRL ?__'_ or _'__ESC__'_ to close instructions
 
+- _'__CTRL ESC__'_ will take you to the start of your document, _'__CTRL SHIFT ESC__'_ to the end
+- _'__CTRL SPACE__'_ will cycle through available keyboard layouts (like regular Chrome OS)
+
 ***
 
 - Pressing _'__ESC__'_ (while editing) will bring up __options__, which will also give you access to most of the __settings__ and __commands__ below
