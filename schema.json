@@ -17,7 +17,7 @@
     },
     "PRINT_FONT_SIZE": {
       "title": "Print Font Size",
-      "description": "",
+      "description": "Sets the default print font size, initially set to 12pt to comply with UK Exam Requirements",
       "type": "integer",
       "default": 12,
     	"minimum": 6,
@@ -31,7 +31,7 @@
     },
     "PRINT_LINE_HEIGHT": {
       "title": "Print Line Height",
-      "description": "",
+      "description": "Sets the default print line height, initially set to double line spacing to comply with UK Exam Requirements",
       "type": "integer",
       "default": 2,
       "minimum": 1,
@@ -39,7 +39,7 @@
     },
     "PRINT_HEADER_LINE_HEIGHT": {
       "title": "Print Header Line Height",
-      "description": "",
+      "description": "Line height for optional candidate page header",
       "type": "number",
       "default": 1.2
     },

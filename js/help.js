@@ -3,8 +3,9 @@ $(document).ready(function() {
   // -- Key Shortcuts for Close -- //
   $("body").keydown(function(event) {
     if (event.which == 27 ||
-      (event.ctrlKey && event.which == 191) ||
-      (event.ctrlKey && event.shiftKey && event.which == 191)) {
+        event.which == 13 ||
+        (event.ctrlKey && event.which == 191) ||
+        (event.ctrlKey && event.shiftKey && event.which == 191)) {
       event.preventDefault();
       chrome.app.window.current().close();
     }

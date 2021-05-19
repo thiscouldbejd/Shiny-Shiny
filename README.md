@@ -22,7 +22,7 @@ It is licensed under version 2.0 of the GNU GENERAL PUBLIC LICENSE License and c
 
 |File|From|Copyright|License|
 |---|---|---|---|
-|jquery-3.3.1.min.js|[Website](http://jquery.org)|Copyright 2005, 2016 jQuery Foundation, Inc.|MIT License|
+|jquery-3.4.1.min.js|[Website](http://jquery.org)|Copyright 2005, 2016 jQuery Foundation, Inc.|MIT License|
 |showdown.min.js|[Website](http://showdownjs.com/)|Copyright 2007, John Fraser|[BSD 3-Clause License](https://github.com/showdownjs/showdown/blob/master/license.txt)|
 |bootstrap/_*_|[Website](https://getbootstrap.com)|2011-2019 the [Bootstrap Authors](https://github.com/twbs/bootstrap/graphs/contributors) and [Twitter, Inc.](https://twitter.com/)|[MIT License](https://github.com/twbs/bootstrap/blob/master/LICENSE)|
 |ace/_*_|[Website](https://ace.c9.io)|Copyright 2010, Ajax.org B.V.|[Revised BSD License](https://github.com/ajaxorg/ace/blob/master/LICENSE)|

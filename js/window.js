@@ -10,8 +10,10 @@ var DEFAULTS = {
     numbers: ".ace_gutter .ace_gutter-cell"
   },
   theme: {
+    muted_dark: "ace/theme/pastel_on_dark",
     dark: "ace/theme/twilight",
     blue: "ace/theme/cobalt",
+    muted_light: "ace/theme/kuroir",
     light: "ace/theme/tomorrow"
   },
   mode: {
@@ -110,6 +112,13 @@ var INSERT = {
 
   header: function(editor) {
     request("/templates/UK-EXAM.md").then(function(value) {
+      GOTO.start(editor);
+      editor.insert(value);
+    });
+  },
+  
+  alignments: function(editor) {
+    request("/templates/ALIGNMENTS.md").then(function(value) {
       GOTO.start(editor);
       editor.insert(value);
     });
@@ -365,7 +374,11 @@ var PRINT = {
         "body > table:first-child > tbody {" + (header ? (_header + " display: table;") : "") + "}",
         "body > table:first-child > tbody p {max-width: " + _width + "vw; word-wrap: break-word;}",
         "body > table:first-child > tbody pre {white-space: pre-wrap;}",
-        "body > table:first-child > tfoot {display: table-footer-group; color: #888; text-align: right;}"
+        "body > table:first-child > tfoot {display: table-footer-group; color: #888; text-align: right;}",
+        "body .align-lhs {text-align: left;}",
+        "body .align-rhs {text-align: right;}",
+        "body .align-center {text-align: center;}",
+        "body .align-justify {width: 100%; text-align: justify;}"
       ].join(" ") : false;
     };
 
@@ -396,6 +409,7 @@ var PRINT = {
 
       // Try to print Markdown Parsed Document
       var converter = new showdown.Converter({
+        extensions: extra_Formatting ? ["classify"] : [],
         tables: true,
         strikethrough: true,
         disableForced4SpacesIndentedSublists: true,
@@ -577,6 +591,202 @@ var CONFIGURE = {
 };
 // -- CONFIGURE Commands -- //
 
+// -- OPTIONS Commands -- //
+var OPTIONS = {
+  
+  show: function(editor) {
+    request("/pages/control.html").then(function(value) {
+      $("#modal").empty().append(value);
+      var _modal = $("#modal .modal").on("hidden.bs.modal", ACTION.focus);
+
+      // -- Set Current Values & Update Handles -- //
+      _modal.find("#fontSize")
+        .val(parseInt(editor.getFontSize(), 10) || DEFAULTS.font.size)
+        .on("change", function(e) {
+          editor.setFontSize(Math.max($(e.currentTarget).val() || 1));
+        })
+        .on("dblclick", function(e) {
+          $(e.currentTarget).val(DEFAULTS.font.size).trigger("change");
+        });
+
+      _modal.find("#lineHeight")
+        .val(parseFloat(editor.container.style.lineHeight, 10) || DEFAULTS.line.height)
+        .on("change", function(e) {
+          editor.container.style.lineHeight = $(e.currentTarget).val();
+        })
+        .on("dblclick", function(e) {
+          $(e.currentTarget).val(DEFAULTS.line.height).trigger("change");
+        });
+
+      _modal.find("#lineNumbers")
+        .prop("checked", editor.renderer.getShowGutter())
+        .on("change", function(e) {
+          editor.renderer.setShowGutter($(e.currentTarget).prop("checked"));
+        });
+
+      ["dark", "muted_dark", "blue", "light", "muted_light"].forEach(function(value) {
+        _modal.find("#" + value + "Mode")
+          .prop("checked", editor.getTheme() == DEFAULTS.theme[value])
+          .on("change", function(e) {
+            if ($(e.currentTarget).prop("checked")) {
+              editor.setTheme(DEFAULTS.theme[value]);
+              $("body").css("background-color", $("#editor").css("background-color"));
+            }
+          });
+      });
+
+      _modal.find("#markdownMode")
+        .prop("checked", editor.getSession().getMode().$id == DEFAULTS.mode.markdown)
+        .on("change", function(e) {
+          editor.getSession().setMode($(e.currentTarget).prop("checked") ?
+            DEFAULTS.mode.markdown : DEFAULTS.mode.text);
+        });
+
+      _modal.find("#overwriteMode")
+        .prop("checked", editor.getOverwrite())
+        .on("change", function(e) {
+          editor.setOverwrite($(e.currentTarget).prop("checked"));
+        });
+
+      _modal.find("#commonCharacters")
+        .on("click", function() {
+          INSERT.characters(editor);
+          _modal.focus();
+        });
+
+      _modal.find("#exampleMarkdown")
+        .on("click", function() {
+          INSERT.markdown(editor);
+          _modal.focus();
+        });
+
+      _modal.find("#headerTemplate")
+        .on("click", function() {
+          INSERT.header(editor);
+          _modal.focus();
+        });
+
+      _modal.find("#exampleAlignments")
+        .on("click", function() {
+          INSERT.alignments(editor);
+          _modal.focus();
+        });
+
+      _modal.find("#wordCounter")
+        .on("click", function() {
+          INSERT.count(editor);
+          _modal.focus();
+        });
+
+      _modal.find("#helpGeneral")
+        .on("click", function() {
+          ACTION.open("pages/help.html?path=/documentation/INSTRUCTIONS.md");
+        });
+
+      _modal.find("#helpCharacters")
+        .on("click", function() {
+          ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md");
+        });
+
+      _modal.find("#simpleLineBreaks")
+        .prop("checked", STATE.print.line.breaks)
+        .on("change", function(e) {
+          STATE.print.line.breaks = $(e.currentTarget).prop("checked");
+        });
+
+      _modal.find("#save")
+        .on("click", function() {
+          SAVE.initial(editor);
+        });
+
+      _modal.find("#print, #printNormally")
+        .on("click", function() {
+          PRINT.print(editor.getSession().getValue(), true, false, STATE.print.line.breaks);
+        });
+
+      _modal.find("#printStrict")
+        .on("click", function() {
+          PRINT.print(editor.getSession().getValue(), true, true, STATE.print.line.breaks);
+        });
+
+      _modal.find("#printNoFormatting")
+        .on("click", function() {
+          PRINT.print(editor.getSession().getValue(), false, false, STATE.print.line.breaks);
+        });
+
+      _modal.find("#printLineHeight")
+        .val(STATE.print.line.height)
+        .on("change", function(e) {
+          STATE.print.line.height = $(e.currentTarget).val();
+        });
+
+      _modal.find("#printTableLineHeight")
+        .val(STATE.print.line.header)
+        .on("change", function(e) {
+          STATE.print.line.header = $(e.currentTarget).val();
+        });
+
+      _modal.find("#printFontSize")
+        .val(STATE.print.font.size)
+        .on("change", function(e) {
+          STATE.print.font.size = $(e.currentTarget).val();
+        });
+
+      ["Top", "Right", "Bottom", "Left"].forEach(function(name, index) {
+        _modal.find("#printMargin" + name)
+          .val(STATE.print.margins[index])
+          .on("change", function(e) {
+            STATE.print.margins[index] = $(e.currentTarget).val();
+          });
+      });
+
+      _modal.find("#recovery")
+        .prop("checked", STATE.file.recovery)
+        .on("change", function(e) {
+          STATE.file.recovery = $(e.currentTarget).prop("checked");
+        });
+
+      _modal.find("#autosave")
+        .val(STATE.file.autosave)
+        .on("change", function(e) {
+          STATE.file.autosave = parseInt($(e.currentTarget).val(), 10);
+          SAVE.auto(editor);
+        });
+
+      _modal.find("#autosaveClear")
+        .on("click", function() {
+          _modal.find("#autosave").val(0).trigger("change");
+        });
+
+      // -- Display Counts -- //
+      var _format = /\B(?=(\d{3})+(?!\d))/g,
+        _lines = editor.getSession().getDocument().getLength().toString().replace(_format, ","),
+        _allWords = editor.getValue().match(/\S+/g),
+        _words = _allWords ? _allWords.length.toString().replace(_format, ",") : 0,
+        _chars = editor.getValue().length.toString().replace(_format, ",");
+
+      _modal.find("#lastSaved").text(STATE.file.saved ? STATE.file.saved.toLocaleString() : "Never");
+      _modal.find("#lineCount").text(_lines);
+      _modal.find("#wordCount").text(_words);
+      _modal.find("#characterCount").text(_chars);
+
+      // -- Handle Enter to Close -- //
+      _modal.keypress(e => {
+        if (e.which === 13) {
+          e.preventDefault();
+          _modal.modal("hide");
+        }
+      });
+      
+      // -- Show Modal -- //
+      _modal.modal("show");
+
+    });
+  },
+  
+};
+// -- OPTIONS Commands -- //
+
 // -- Startup Function -- //
 $(document).ready(function() {
 
@@ -599,174 +809,17 @@ $(document).ready(function() {
       win: "Esc",
       mac: "Esc"
     },
-    exec: function(editor) {
-      request("/pages/control.html").then(function(value) {
-        $("#modal").empty().append(value);
-        var _modal = $("#modal .modal").on("hidden.bs.modal", ACTION.focus);
-
-        // -- Set Current Values & Update Handles -- //
-        _modal.find("#fontSize")
-          .val(parseInt(editor.getFontSize(), 10) || DEFAULTS.font.size)
-          .on("change", function(e) {
-            editor.setFontSize(Math.max($(e.currentTarget).val() || 1));
-          })
-          .on("dblclick", function(e) {
-            $(e.currentTarget).val(DEFAULTS.font.size).trigger("change");
-          });
-
-        _modal.find("#lineHeight")
-          .val(parseFloat(editor.container.style.lineHeight, 10) || DEFAULTS.line.height)
-          .on("change", function(e) {
-            editor.container.style.lineHeight = $(e.currentTarget).val();
-          })
-          .on("dblclick", function(e) {
-            $(e.currentTarget).val(DEFAULTS.line.height).trigger("change");
-          });
-
-        _modal.find("#lineNumbers")
-          .prop("checked", editor.renderer.getShowGutter())
-          .on("change", function(e) {
-            editor.renderer.setShowGutter($(e.currentTarget).prop("checked"));
-          });
-
-        ["dark", "blue", "light"].forEach(function(value) {
-          _modal.find("#" + value + "Mode")
-            .prop("checked", editor.getTheme() == DEFAULTS.theme[value])
-            .on("change", function(e) {
-              if ($(e.currentTarget).prop("checked")) editor.setTheme(DEFAULTS.theme[value]);
-            });
-        });
-
-        _modal.find("#markdownMode")
-          .prop("checked", editor.getSession().getMode().$id == DEFAULTS.mode.markdown)
-          .on("change", function(e) {
-            editor.getSession().setMode($(e.currentTarget).prop("checked") ?
-              DEFAULTS.mode.markdown : DEFAULTS.mode.text);
-          });
-
-        _modal.find("#overwriteMode")
-          .prop("checked", editor.getOverwrite())
-          .on("change", function(e) {
-            editor.setOverwrite($(e.currentTarget).prop("checked"));
-          });
-
-        _modal.find("#commonCharacters")
-          .on("click", function() {
-            INSERT.characters(editor);
-          });
-
-        _modal.find("#exampleMarkdown")
-          .on("click", function() {
-            INSERT.markdown(editor);
-          });
-
-        _modal.find("#headerTemplate")
-          .on("click", function() {
-            INSERT.header(editor);
-          });
-
-        _modal.find("#wordCounter")
-          .on("click", function() {
-            INSERT.count(editor);
-          });
-
-        _modal.find("#helpGeneral")
-          .on("click", function() {
-            ACTION.open("pages/help.html?path=/documentation/INSTRUCTIONS.md");
-          });
-
-        _modal.find("#helpCharacters")
-          .on("click", function() {
-            ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md");
-          });
-
-        _modal.find("#simpleLineBreaks")
-          .prop("checked", STATE.print.line.breaks)
-          .on("change", function(e) {
-            STATE.print.line.breaks = $(e.currentTarget).prop("checked");
-          });
-
-        _modal.find("#save")
-          .on("click", function() {
-            SAVE.initial(editor);
-          });
-
-        _modal.find("#print, #printNormally")
-          .on("click", function() {
-            PRINT.print(editor.getSession().getValue(), true, false, STATE.print.line.breaks);
-          });
-
-        _modal.find("#printStrict")
-          .on("click", function() {
-            PRINT.print(editor.getSession().getValue(), true, true, STATE.print.line.breaks);
-          });
-
-        _modal.find("#printNoFormatting")
-          .on("click", function() {
-            PRINT.print(editor.getSession().getValue(), false, false, STATE.print.line.breaks);
-          });
-
-        _modal.find("#printLineHeight")
-          .val(STATE.print.line.height)
-          .on("change", function(e) {
-            STATE.print.line.height = $(e.currentTarget).val();
-          });
-
-        _modal.find("#printTableLineHeight")
-          .val(STATE.print.line.header)
-          .on("change", function(e) {
-            STATE.print.line.header = $(e.currentTarget).val();
-          });
-
-        _modal.find("#printFontSize")
-          .val(STATE.print.font.size)
-          .on("change", function(e) {
-            STATE.print.font.size = $(e.currentTarget).val();
-          });
-
-        ["Top", "Right", "Bottom", "Left"].forEach(function(name, index) {
-          _modal.find("#printMargin" + name)
-            .val(STATE.print.margins[index])
-            .on("change", function(e) {
-              STATE.print.margins[index] = $(e.currentTarget).val();
-            });
-        });
-
-        _modal.find("#recovery")
-          .prop("checked", STATE.file.recovery)
-          .on("change", function(e) {
-            STATE.file.recovery = $(e.currentTarget).prop("checked");
-          });
-
-        _modal.find("#autosave")
-          .val(STATE.file.autosave)
-          .on("change", function(e) {
-            STATE.file.autosave = parseInt($(e.currentTarget).val(), 10);
-            SAVE.auto(editor);
-          });
-
-        _modal.find("#autosaveClear")
-          .on("click", function() {
-            _modal.find("#autosave").val(0).trigger("change");
-          });
-
-        // -- Display Counts -- //
-        var _format = /\B(?=(\d{3})+(?!\d))/g,
-          _lines = editor.getSession().getDocument().getLength().toString().replace(_format, ","),
-          _allWords = editor.getValue().match(/\S+/g),
-          _words = _allWords ? _allWords.length.toString().replace(_format, ",") : 0,
-          _chars = editor.getValue().length.toString().replace(_format, ",");
-
-        _modal.find("#lastSaved").text(STATE.file.saved ? STATE.file.saved.toLocaleString() : "Never");
-        _modal.find("#lineCount").text(_lines);
-        _modal.find("#wordCount").text(_words);
-        _modal.find("#characterCount").text(_chars);
-
-        // -- Show Modal -- //
-        _modal.modal("show");
-
-      });
+    exec: OPTIONS.show,
+    readOnly: true
+  }); // -- Show Options Dialog -- //
+  
+  editor.commands.addCommand({
+    name: "Show Controls | Alternative",
+    bindKey: {
+      win: "Ctrl-Return",
+      mac: "Command-Return"
     },
+    exec: OPTIONS.show,
     readOnly: true
   }); // -- Show Options Dialog -- //
 
@@ -891,11 +944,31 @@ $(document).ready(function() {
     readOnly: true
   }); // -- Go To Top (overrides default close) -- //
   
-    editor.commands.addCommand({
+  editor.commands.addCommand({
+    name: "Go to Top | Arrow",
+    bindKey: {
+      win: "Ctrl-Up",
+      mac: "Command-Up"
+    },
+    exec: GOTO.start,
+    readOnly: true
+  }); // -- Go To Top -- //
+  
+  editor.commands.addCommand({
     name: "Go to Bottom",
     bindKey: {
       win: "Ctrl-Shift-Esc",
       mac: "Command-Shift-Esc"
+    },
+    exec: GOTO.end,
+    readOnly: true
+  }); // -- Go To Bottom -- //
+  
+  editor.commands.addCommand({
+    name: "Go to Bottom | Arrow",
+    bindKey: {
+      win: "Ctrl-Down",
+      mac: "Command-Down"
     },
     exec: GOTO.end,
     readOnly: true
@@ -1021,6 +1094,7 @@ $(document).ready(function() {
     },
     exec: function(editor) {
       editor.setTheme(DEFAULTS.theme.dark);
+      $("body").css("background-color", $("#editor").css("background-color"));
     },
     readOnly: true
   }); // -- Dark Mode -- //
@@ -1033,6 +1107,7 @@ $(document).ready(function() {
     },
     exec: function(editor) {
       editor.setTheme(DEFAULTS.theme.blue);
+      $("body").css("background-color", $("#editor").css("background-color"));
     },
     readOnly: true
   }); // -- Dark Mode -- //
@@ -1045,6 +1120,7 @@ $(document).ready(function() {
     },
     exec: function(editor) {
       editor.setTheme(DEFAULTS.theme.light);
+      $("body").css("background-color", $("#editor").css("background-color"));
     },
     readOnly: true
   }); // -- Light Mode -- //
