@@ -91,6 +91,8 @@ var ACTION = {
         left: Math.round((screenWidth - width) / 2),
         top: Math.round((screenHeight - height) / 2)
       }
+    }, function(created) {
+      console.log(created);
     });
   },
 
@@ -117,11 +119,35 @@ var INSERT = {
     });
   },
   
-  alignments: function(editor) {
-    request("/templates/ALIGNMENTS.md").then(function(value) {
-      GOTO.start(editor);
+  alignments: function(editor, specific) {
+    request(specific  ? "/templates/ALIGNMENT-" + specific.toUpperCase() + ".md" : "/templates/ALIGNMENTS.md")
+    .then(function(value) {
+      if (!specific) {
+          GOTO.start(editor);
+      } else if (editor.getSelectedText()) {
+          var _lines = value.split("\n");
+          _lines[1] = editor.getSelectedText();
+          value = _lines.join("\n");
+      }
       editor.insert(value);
     });
+  },
+  
+  table: function(editor, columns, rows) {
+    var _table = [];
+    _table.push(`| ${Array(columns).fill().map(function() {
+        return "Header";
+    }).join(" | ")} |`);
+    _table.push(`|${Array(columns).fill().map(function() {
+        return ":------:";
+    }).join("|")}|`);
+    for (var i = 0; i < rows; i++) {
+        _table.push(`|${Array(columns).fill().map(function() {
+            return "  Text  ";
+        }).join("|")}|`);
+    }
+    _table.push("");
+    editor.insert(_table.join("\n"));
   },
 
   count: function(editor) {
@@ -378,7 +404,9 @@ var PRINT = {
         "body .align-lhs {text-align: left;}",
         "body .align-rhs {text-align: right;}",
         "body .align-center {text-align: center;}",
-        "body .align-justify {width: 100%; text-align: justify;}"
+        "body .align-justify {width: 100%; text-align: justify;}",
+        "body table tr th {padding-left: 4px; padding-right: 4px;}",
+        "body table tr td {padding: 2px;}",
       ].join(" ") : false;
     };
 
@@ -669,6 +697,38 @@ var OPTIONS = {
       _modal.find("#exampleAlignments")
         .on("click", function() {
           INSERT.alignments(editor);
+          _modal.focus();
+        });
+        
+      _modal.find("#centerAlignment")
+        .on("click", function() {
+          INSERT.alignments(editor, "center");
+          _modal.focus();
+        });
+      
+      _modal.find("#leftAlignment")
+        .on("click", function() {
+          INSERT.alignments(editor, "left");
+          _modal.focus();
+        });
+        
+      _modal.find("#rightAlignment")
+        .on("click", function() {
+          INSERT.alignments(editor, "right");
+          _modal.focus();
+        });
+        
+      _modal.find("#justifyAlignment")
+        .on("click", function() {
+          INSERT.alignments(editor, "justify");
+          _modal.focus();
+        });
+        
+      _modal.find("#tableScaffolding")
+        .on("click", function() {
+          var _columns = Number(_modal.find("#table_Columns").val() || 3),
+              _rows = Number(_modal.find("#table_Rows").val() || 3);
+          if (_columns && _rows) INSERT.table(editor, _columns, _rows);
           _modal.focus();
         });
 
