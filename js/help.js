@@ -37,7 +37,7 @@ $(document).ready(function() {
     content.find("li em strong, p em strong")
       .each(function(index, element) {
         $(element).parent().replaceWith(
-          "<span class='badge badge-dark'>" + $(element).text().replace(/'/g, "") + "</span>"
+          "<span class='badge bg-dark'>" + $(element).text().replace(/'/g, "") + "</span>"
         );
       });
 

@@ -16,3 +16,7 @@ body {
         top: 10px !important;
     }
 }
+
+.font-smaller-70 {
+	font-size: 70% !important;
+}

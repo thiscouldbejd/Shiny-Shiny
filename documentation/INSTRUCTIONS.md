@@ -55,7 +55,7 @@ If you find it easier to have larger text or a bigger gap between the lines, the
 
 ***
 
-- To toggle line numbers on or off on your screen, press _'__CTRL-G__'_
+- To toggle line numbers on or off on your screen, press _'__CTRL G__'_
 - If you prefer light text on a dark background, press _'__CTRL D__'_, if you prefer dark text on a light background (default), press _'__CTRL L__'_
 
 ### Styling

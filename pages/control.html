@@ -1,11 +1,9 @@
 <div class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Options</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-2">
         <div class="container-fluid p-0">
@@ -30,7 +28,7 @@
                       <div class="col-12 col-lg-6">
 
                         <label for="fontSize">Text Size</label>
-                        <input type="range" class="custom-range" id="fontSize" min="4" max="60" step="1">
+                        <input type="range" class="form-range" id="fontSize" min="4" max="60" step="1">
 
                       </div>
 
@@ -38,7 +36,7 @@
                       <div class="col-12 col-lg-6">
 
                         <label for="lineHeight">Line Height</label>
-                        <input type="range" class="custom-range" id="lineHeight" min="1" max="10" step="0.2">
+                        <input type="range" class="form-range" id="lineHeight" min="1" max="10" step="0.2">
 
                       </div>
 
@@ -48,46 +46,49 @@
 
                       <div class="col-12 align-self-center">
 
-                        <div class="d-flex flex-column flex-wrap flex-md-row align-items-center justify-content-between">
+                        <div class="d-flex flex-column flex-wrap flex-sm-row align-items-center justify-content-between">
 
                           <!-- Theme Modes -->
-                          <div class="custom-control custom-radio">
-                            <input type="radio" id="darkMode" name="modes" class="custom-control-input">
-                            <label class="custom-control-label" for="darkMode">Dark</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" id="darkMode" name="modes">
+                            <label class="form-check-label" for="darkMode">Dark</label>
                           </div>
-                          <div class="custom-control custom-radio">
-                            <input type="radio" id="muted_darkMode" name="modes" class="custom-control-input">
-                            <label class="custom-control-label" for="muted_darkMode">Soft</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" id="muted_darkMode" name="modes">
+                            <label class="form-check-label" for="muted_darkMode">Soft</label>
                           </div>
-                          <div class="custom-control custom-radio">
-                            <input type="radio" id="blueMode" name="modes" class="custom-control-input">
-                            <label class="custom-control-label" for="blueMode">Blue</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" id="blueMode" name="modes">
+                            <label class="form-check-label" for="blueMode">Blue</label>
                           </div>
-                          <div class="custom-control custom-radio">
-                            <input type="radio" id="lightMode" name="modes" class="custom-control-input">
-                            <label class="custom-control-label" for="lightMode">Light</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" id="lightMode" name="modes">
+                            <label class="form-check-label" for="lightMode">Light</label>
                           </div>
-                          <div class="custom-control custom-radio">
-                            <input type="radio" id="muted_lightMode" name="modes" class="custom-control-input">
-                            <label class="custom-control-label" for="muted_lightMode">Muted</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" id="muted_lightMode" name="modes">
+                            <label class="form-check-label" for="muted_lightMode">Muted</label>
                           </div>
 
+                          <!-- Line Break at Medium and below -->
+                          <div class="w-100 d-lg-none"></div>
+
                           <!-- Line Numbers -->
-                          <div class="custom-control custom-checkbox mr-2 mt-1">
-                            <input id="lineNumbers" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="lineNumbers">Line Numbers</label>
+                          <div class="form-check mr-2 mt-1">
+                            <input class="form-check-input" id="lineNumbers" type="checkbox">
+                            <label class="form-check-label" for="lineNumbers">Line Numbers</label>
                           </div>
 
                           <!-- Markdown -->
-                          <div class="custom-control custom-checkbox mr-2 mt-1">
-                            <input id="markdownMode" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="markdownMode">Markdown</label>
+                          <div class="form-check mr-2 mt-1">
+                            <input class="form-check-input" id="markdownMode" type="checkbox">
+                            <label class="form-check-label" for="markdownMode">Markdown</label>
                           </div>
 
                           <!-- Overwrite -->
-                          <div class="custom-control custom-checkbox mt-1">
-                            <input id="overwriteMode" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="overwriteMode">Overwrite</label>
+                          <div class="form-check mt-1">
+                            <input class="form-check-input" id="overwriteMode" type="checkbox" >
+                            <label class="form-check-label" for="overwriteMode">Overwrite</label>
                           </div>
 
                         </div>
@@ -123,9 +124,11 @@
                           <div class="form-group col-6 col-lg-4 mb-2">
 
                             <label for="autosave">Autosave (mins | 0 = off)</label>
-                            <button id="autosaveClear" type="button" class="close" aria-label="Clear">
-                              <span aria-hidden="true">×</span>
-                            </button>
+                            
+                            <span class="d-none d-sm-block font-smaller-70 float-end">
+                              <button id="autosaveClear" type="button" class="btn-close mt-1" aria-label="Clear"></button>
+                            </span>
+                            
                             <input id="autosave" class="form-control" type="number" min="0" max="60" step="1">
 
                           </div>
@@ -133,9 +136,9 @@
                           <!-- Recovery -->
                           <div class="form-group col-6 col-lg-3 col-xl-2 mb-2">
 
-                            <div class="custom-control custom-checkbox mt-1">
-                              <input id="recovery" type="checkbox" class="custom-control-input">
-                              <label class="custom-control-label" for="recovery">Recovery Save</label>
+                            <div class="form-check mt-1">
+                              <input class="form-check-input" id="recovery" type="checkbox">
+                              <label class="form-check-label" for="recovery">Recovery Save</label>
                             </div>
 
                           </div>
@@ -212,9 +215,9 @@
                         <div class="d-flex flex-wrap flex-row flex-lg-column align-self-center">
 
                           <!-- Simple Line Breaks -->
-                          <div class="custom-control custom-checkbox mr-2 mt-1">
-                            <input id="simpleLineBreaks" type="checkbox" class="custom-control-input">
-                            <label class="custom-control-label" for="simpleLineBreaks">Line Breaks</label>
+                          <div class="form-check mr-2 mt-1">
+                            <input class="form-check-input" id="simpleLineBreaks" type="checkbox">
+                            <label class="form-check-label" for="simpleLineBreaks">Line Breaks</label>
                           </div>
 
                         </div>
@@ -277,18 +280,19 @@
           
           <!-- Help Buttons -->
           <div class="btn-group dropup">
-            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</button>
+            <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" id="helpGeneral" href="#" data-dismiss="modal">Instructions</a>
-              <a class="dropdown-item" id="helpCharacters" href="#" data-dismiss="modal">All Characters</a>
+              <a class="dropdown-item" id="helpGeneral" href="#" data-bs-dismiss="modal">Instructions</a>
+              <a class="dropdown-item" id="helpCharacters" href="#" data-bs-dismiss="modal">All Characters</a>
             </div>
           </div>
           
           <!-- Insert Buttons -->
           <div class="btn-group dropup">
-            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insert</button>
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insert</button>
             <div class="dropdown-menu">
               <a class="dropdown-item" id="headerTemplate" href="#">Header</a>
+              <a class="dropdown-item" id="headerInternalTemplate" href="#">Internal Header</a>
               <a class="dropdown-item" id="wordCounter" href="#">Word Count</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" id="commonCharacters" href="#">International Characters</a>
@@ -304,7 +308,7 @@
               <a class="dropdown-item" id="tableScaffolding" href="#">Table</a>
               <div class="px-4">
                 <div class="form-group">
-                  <input type="number" class="form-control" id="table_Columns" placeholder="columns">
+                  <input type="number" class="form-control mb-1" id="table_Columns" placeholder="columns">
                 </div>
                 <div class="form-group">
                   <input type="number" class="form-control" id="table_Rows" placeholder="rows">
@@ -312,26 +316,32 @@
               </div>
             </div>
           </div>
+
+          <!-- Template Buttons -->
+          <div id="templates" class="btn-group dropup d-none">
+            <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Templates</button>
+            <div class="dropdown-menu"></div>
+          </div>
           
           <!-- Save Button -->
           <button id="save" type="button" class="btn btn-dark">Save File</button>
           
           <!-- Print Buttons -->
           <div class="btn-group dropup">
-            <button id="print" type="button" class="btn btn-primary" data-dismiss="modal">Print</button>
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="sr-only">Toggle Dropdown</span>
+            <button id="print" type="button" class="btn btn-primary" data-bs-dismiss="modal">Print</button>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" id="printNormally" href="#" data-dismiss="modal">Normally</a>
+              <a class="dropdown-item" id="printNormally" href="#" data-bs-dismiss="modal">Normally</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" id="printStrict" href="#" data-dismiss="modal">Strict Parsing</a>
-              <a class="dropdown-item" id="printNoFormatting" href="#" data-dismiss="modal">No Extra Format</a>
+              <a class="dropdown-item" id="printStrict" href="#" data-bs-dismiss="modal">Strict Parsing</a>
+              <a class="dropdown-item" id="printNoFormatting" href="#" data-bs-dismiss="modal">No Extra Format</a>
             </div>
           </div>
           
           <!-- Close / Back to Editor Button -->
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
           
         </div>
       </div>

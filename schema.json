@@ -1,6 +1,12 @@
 {
 	"type": "object",
 	"properties": {
+    "DEBUG": {
+      "title": "Debug Mode",
+      "description": "Log Configuration and Debugging Messages to the Javascript Console",
+      "type": "boolean",
+      "default": false
+    },
     "SAVE_RECOVERY": {
       "title": "Recovery Save",
       "description": "Automatically save out recovery document on normal app close",
@@ -75,5 +81,34 @@
       "minimum": 0,
       "maximum": 100
     },
+    "CUSTOM_TEMPLATES": {
+      "title": "List of Custom Templates",
+      "description": "Custom Markdown Templates that can be added",
+      "type": "array",
+      "default": false,
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title of the Template",
+            "type": "string"
+          },
+          "template": {
+            "title": "Template Body (Markdown)",
+            "type": "string"
+          },
+          "default": {
+            "title": "Insert (by default) in each new Document",
+            "type": "boolean",
+            "default": false
+          },
+          "top": {
+            "title": "Insert at the top of the Document",
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    }
 	}
 }

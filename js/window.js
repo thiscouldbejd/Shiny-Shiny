@@ -31,6 +31,9 @@ var DEFAULTS = {
 
 // -- STATE / Mutable Values -- //
 var STATE = {
+  editor: null,
+  value: null,
+  debug: false,
   file: {
     id: null,
     recovery: false,
@@ -48,7 +51,8 @@ var STATE = {
       header: 1.2
     },
     margins: [0, 0, 0, 0]
-  }
+  },
+  templates: [],
 };
 // -- STATE / Mutable Values -- //
 
@@ -78,22 +82,60 @@ var ACTION = {
     editor.focus();
   },
 
-  open: function(path) {
+  open: function(path, id) {
     var screenWidth = screen.availWidth;
     var screenHeight = screen.availHeight;
     var width = screenWidth / 1.5;
     var height = screenHeight / 1.5;
 
-    chrome.app.window.create(path, {
-      bounds: {
-        width: Math.round(width),
-        height: Math.round(height),
-        left: Math.round((screenWidth - width) / 2),
-        top: Math.round((screenHeight - height) / 2)
-      }
-    }, function(created) {
-      console.log(created);
-    });
+    return new Promise((resolve, reject) => {
+      chrome.app.window.create(path, {
+        id : id || "help",
+        bounds: {
+          width: Math.round(width),
+          height: Math.round(height),
+          left: Math.round((screenWidth - width) / 2),
+          top: Math.round((screenHeight - height) / 2)
+        }
+      }, function(created) {
+        if (STATE.debug) console.log(created);
+        if (created) {
+          resolve(created.contentWindow);
+        } else {
+          reject(chrome.runtime.lastError);
+        }
+      });
+    })
+  },
+
+  instructions: function() {
+    return ACTION.open("pages/help.html?path=/documentation/INSTRUCTIONS.md")
+      .then(window => {
+        if (STATE.debug) console.log(window);
+      })
+      .catch(e => {
+        if (STATE.debug) console.log(e);
+        return null;
+      });
+  },
+
+  characters: function() {
+    return ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md")
+      .then(window => {
+        if (STATE.debug) console.log(window);
+        window.addEventListener("load", () => {
+          window.document.querySelectorAll("tr").forEach((el) => {
+            el.style.cursor = "pointer";
+            el.addEventListener("click", e => {
+              INSERT.arbitary(STATE.editor(), el.getElementsByTagName("td")[1].textContent);
+            });
+          });
+        });
+      })
+      .catch(e => {
+        if (STATE.debug) console.log(e);
+        return null;
+      });
   },
 
 };
@@ -101,6 +143,11 @@ var ACTION = {
 
 // -- INSERT Commands -- //
 var INSERT = {
+
+  arbitary: function(editor, text, top) {
+    if (top) GOTO.start(editor);
+    editor.insert(text);
+  },
 
   characters: function(editor) {
     editor.insert("é è à ù â ê î ô û ë ï ç   ä Ä ö Ö ü Ü ß   í ó ú ñ ¡ ¿");
@@ -114,6 +161,13 @@ var INSERT = {
 
   header: function(editor) {
     request("/templates/UK-EXAM.md").then(function(value) {
+      GOTO.start(editor);
+      editor.insert(value);
+    });
+  },
+
+  header_internal: function(editor) {
+    request("/templates/INTERNAL-EXAM.md").then(function(value) {
       GOTO.start(editor);
       editor.insert(value);
     });
@@ -505,7 +559,17 @@ var CONFIGURE = {
 
   keys: function() {
 
-    return [{
+    return [
+
+      {
+        key: "DEBUG",
+        get: function() {
+          return STATE.debug;
+        },
+        set: function(value) {
+          STATE.debug = value;
+        },
+      },{
         key: "SAVE_RECOVERY",
         get: function() {
           return STATE.file.recovery;
@@ -596,22 +660,45 @@ var CONFIGURE = {
           STATE.print.margins[3] = value;
         },
       },
+      {
+        key: "CUSTOM_TEMPLATES",
+        get: function() {
+          return STATE.templates;
+        },
+        set: function(value) {
+          STATE.templates = value;
+        },
+      },
+
     ];
   },
 
-  managed: function() {
-    CONFIGURE.read("managed");
-  },
+  managed: () => CONFIGURE.read("managed")
+      .then(state => {
+        if (state.debug) console.log("Configured State:", state);
+        return state;
+      })
+      .catch(e => {
+        if (STATE.debug) console.log(e);
+        return null;
+      }),
 
   read: function(from) {
 
     var _storage = chrome.storage[from ? from : "managed"];
     if (!_storage) return;
 
-    _storage.get(null, function(items) {
-      if (!chrome.runtime.lastError) CONFIGURE.keys().forEach(function(key) {
-        if (items[key.key] !== undefined && items[key.key] !== null) key.set(items[key.key]);
-      });
+    return new Promise((resolve, reject) => {
+      _storage.get(null, function(items) {
+        if (!chrome.runtime.lastError) {
+          CONFIGURE.keys().forEach(function(key) {
+            if (items[key.key] !== undefined && items[key.key] !== null) key.set(items[key.key]);
+          });
+          resolve(STATE);
+        } else {
+          reject(chrome.runtime.lastError);
+        }
+      });      
     });
 
   },
@@ -694,6 +781,12 @@ var OPTIONS = {
           _modal.focus();
         });
 
+      _modal.find("#headerInternalTemplate")
+        .on("click", function() {
+          INSERT.header_internal(editor);
+          _modal.focus();
+        });
+
       _modal.find("#exampleAlignments")
         .on("click", function() {
           INSERT.alignments(editor);
@@ -739,14 +832,10 @@ var OPTIONS = {
         });
 
       _modal.find("#helpGeneral")
-        .on("click", function() {
-          ACTION.open("pages/help.html?path=/documentation/INSTRUCTIONS.md");
-        });
+        .on("click", ACTION.instructions);
 
       _modal.find("#helpCharacters")
-        .on("click", function() {
-          ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md");
-        });
+        .on("click", ACTION.characters);
 
       _modal.find("#simpleLineBreaks")
         .prop("checked", STATE.print.line.breaks)
@@ -830,6 +919,28 @@ var OPTIONS = {
       _modal.find("#wordCount").text(_words);
       _modal.find("#characterCount").text(_chars);
 
+      // -- Handle Populating Custom Templates -- //
+      var _templates = _modal.find("#templates");
+      if (STATE.templates && STATE.templates.length > 0) {
+        _templates.removeClass("d-none");
+        var _custom = _templates.children(".dropdown-menu");
+        _custom.empty();
+        STATE.templates
+          .filter((template) => template.title && template.template)
+          .forEach((template) => {
+          if (STATE.debug) console.log("Custom Template:", template);
+          var _template = $(`<a class="dropdown-item" href="#">${template.title}</a>`);
+          _custom.append(_template);
+          _template.on("click", (template => () => {
+            if (STATE.debug) console.log(`[SELECTED] ${template.title}:`, template.template);
+            INSERT.arbitary(editor, template.template, template.top !== false);
+            _modal.focus();
+          })(template));
+        });
+      } else {
+        _templates.addClass("d-none");
+      }
+
       // -- Handle Enter to Close -- //
       _modal.keypress(e => {
         if (e.which === 13) {
@@ -856,12 +967,26 @@ $(document).ready(function() {
   editor.getSession().setUseWrapMode(true);
   editor.setFontSize(DEFAULTS.font.size);
   editor.setShowPrintMargin(false);
+  STATE.editor = function() {
+    return editor;
+  }
   STATE.value = function() {
     return editor.getValue();
   };
 
   // -- Read Managed Configuration -- //
-  CONFIGURE.managed();
+  CONFIGURE.managed().then(state => {
+
+    // -- Insert Default Templates -- //
+    if (state && state.templates && state.templates.length > 0) state.templates
+      .filter((template) => template.template && template.default === true)
+      .forEach((template) => {
+        if (STATE.debug) console.log("Custom Default Template:", template);
+        INSERT.arbitary(editor, template.template);
+      });
+    // -- Insert Default Templates -- //
+
+  });
 
   editor.commands.addCommand({
     name: "Show Controls",
@@ -1194,9 +1319,7 @@ $(document).ready(function() {
       win: "Ctrl-/",
       mac: "Command-/"
     },
-    exec: function() {
-      ACTION.open("pages/help.html?path=/documentation/INSTRUCTIONS.md");
-    },
+    exec: ACTION.instructions,
     readOnly: true
   }); // -- Show Help -- //
 
@@ -1206,9 +1329,7 @@ $(document).ready(function() {
       win: "Ctrl-Shift-/",
       mac: "Command-Shift-/"
     },
-    exec: function() {
-      ACTION.open("pages/help.html?path=/documentation/CHARACTERS.md");
-    },
+    exec: ACTION.characters,
     readOnly: true
   }); // -- Show Foreign / International Characters -- //
   // -- Show Commands -- //
@@ -1246,7 +1367,7 @@ $(document).ready(function() {
   }); // -- Insert Word Count -- //
 
   editor.commands.addCommand({
-    name: "Insert Template",
+    name: "Insert Header Template",
     bindKey: {
       win: "Ctrl-T",
       mac: "Command-T"
@@ -1254,6 +1375,16 @@ $(document).ready(function() {
     exec: INSERT.header,
     readOnly: true
   }); // -- Insert Header Template -- //
+
+  editor.commands.addCommand({
+    name: "Insert Internal Header Template",
+    bindKey: {
+      win: "Ctrl-E",
+      mac: "Command-E"
+    },
+    exec: INSERT.header_internal,
+    readOnly: true
+  }); // -- Insert Internal Header Template -- //
   // -- Insertion Commands -- //
 
   // -- Extra Commands -- //
@@ -1265,8 +1396,8 @@ $(document).ready(function() {
     },
     exec: CONFIGURE.managed,
     readOnly: true
-  }); // -- Extra Commands -- //
-
+  });
+  // -- Extra Commands -- //
 
   // -- Focus, ready to go! -- //
   ACTION.focus();
