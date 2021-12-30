@@ -1,9 +1,26 @@
 {
-	"SAVE_RECOVERY": {"Value" : true},
+  "SAVE_RECOVERY": {"Value" : true},
   "SAVE_AUTOSAVE": {"Value" : 5},
   "PRINT_LINE_BREAKS": {"Value" : true},
   "PRINT_FONT_SIZE": {"Value" : 14},
   "PRINT_LINE_HEIGHT": {"Value" : 2},
-	"PRINT_GUTTER_RIGHT": {"Value" : 5},
-	"PRINT_GUTTER_LEFT": {"Value" : 10}
+  "PRINT_GUTTER_RIGHT": {"Value" : 5},
+  "PRINT_GUTTER_LEFT": {"Value" : 10},
+  "CUSTOM_TEMPLATES": {
+    "Value" : [
+      {
+        "title" : "Example Header",
+        "template" : "This header text will be inserted at the start\n"
+      },
+      {
+        "title" : "Example Text",
+        "template" : "\nThis text will be inserted wherever the cursor is\n",
+        "top" : false
+      },
+      {
+        "template" : "@Exam Script@\n\n* * *\n+ __Name__:\n+ __Class Year__:\n+ __Teacher Name__:\n+ __Date__:\n+ __Exam__:\n* * *\n\n",
+        "default" : true
+      }
+    ]
+  }
 }
