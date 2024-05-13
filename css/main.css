@@ -1,22 +1,63 @@
-body {
-	overflow: hidden;
+@media screen {
+
+	body {
+		overflow: hidden;
+	}
+	
+	#editor {
+		margin: 0;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	#printable {
+		display: none;
+	}
+
+	.font-smaller-70 {
+		font-size: 70% !important;
+	}
+	
+	.ace_marker-layer .misspelled {
+		position: absolute;
+		z-index: -2;
+		border-bottom: 1px solid red;
+		margin-bottom: -1px;
+	}
+
+	.misspelled {
+		border-bottom: 1px solid red;
+		margin-bottom: -1px;
+	}
+
+	
 }
 
-#editor {
-	margin: 0;
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-}
 
 @media (display-mode: fullscreen) {
-    #editor {
-        top: 10px !important;
-    }
+
+  #editor {
+		top: 10px !important;
+  }
+
 }
 
-.font-smaller-70 {
-	font-size: 70% !important;
+
+@media print {
+
+	#editor {
+		display: none;
+	}
+
+	#model {
+		display: none;
+	}
+
+	#printable {
+		display: block;
+	}
+
 }

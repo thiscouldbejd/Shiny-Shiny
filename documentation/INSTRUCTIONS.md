@@ -18,6 +18,7 @@ Instructions
 
 - Press _'__CTRL S__'_ to save your work to a USB key or similar (_'__CTRL SHIFT O__'_ to open)
 - Once you have saved it once (in a session), press _'__CTRL SHIFT S__'_ to overwrite the saved version with the current version (it won't warn you!)
+- You can check the last time the current file was saved from the __options__ by pressing _'__ESC__'_ or _'__CTRL ENTER__'_
 
 ***
 
@@ -73,3 +74,9 @@ If you find it easier to have larger text or a bigger gap between the lines, the
 - For a list of all international and special characters (together with their codes) press _'__CTRL SHIFT ?__'_
 - Press _'__CTRL SHIFT ?__'_, _'__CTRL ?__'_ or _'__ESC__'_ to close the special characters
 - Pressing _'__CTRL Q__'_ while editing will insert a commonly used selection of these characters, to make it easy to copy and paste them into your document
+
+### Code Blocks
+
+- Code blocks can be entered by using the lines '```' or '~~~' before and after your code
+- Indents are preserved in code, and long lines will be wrapped when printing
+- When printed, code blocks will use a mono-spaced typeface

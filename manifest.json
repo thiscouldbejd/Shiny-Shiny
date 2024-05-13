@@ -2,13 +2,13 @@
 	"name" : "__MSG_extensionDebugName__",
 	"short_name" : "__MSG_extensionDebugShortName__",
 	"description" : "__MSG_extensionDescription__",
-	"version" : "0.8.2",
+	"version" : "0.9.5",
 	"author" : "thiscouldbejd",
 	"default_locale" : "en",
 	"manifest_version" : 2,
 	"app" : {
 		"background" : {
-			"scripts" : ["js/background.js"]
+			"scripts" : ["app/background.js"]
 		}
 	},
 	"icons" : {
@@ -21,12 +21,12 @@
 	"permissions" : [
 		{
 			"fileSystem" : [
-				"write",
+				"write", 
 				"directory"
 			]
 		},
 		"storage",
-		"power"
+    "power"
 	],
   "storage" : {
 		"managed_schema" : "schema.json"
@@ -37,5 +37,11 @@
 				"text/*"
 			]
 		}
+	},
+	"cross_origin_opener_policy": {
+		"value": "unsafe-none"
+	},
+	"cross_origin_embedder_policy": {
+		"value": "unsafe-none"
 	}
 }

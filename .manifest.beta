@@ -2,13 +2,13 @@
 	"name" : "__MSG_extensionBetaName__",
 	"short_name" : "__MSG_extensionBetaShortName__",
 	"description" : "__MSG_extensionDescription__",
-	"version" : "0.8.2",
+	"version" : "0.9.5",
 	"author" : "thiscouldbejd",
 	"default_locale" : "en",
 	"manifest_version" : 2,
 	"app" : {
 		"background" : {
-			"scripts" : ["js/background.js"]
+			"scripts" : ["app/background.js"]
 		}
 	},
 	"icons" : {
@@ -19,7 +19,12 @@
 	"offline_enabled" : true,
 	"kiosk_enabled" : true,
 	"permissions" : [
-		{"fileSystem" : ["write", "directory"]},
+		{
+			"fileSystem" : [
+				"write", 
+				"directory"
+			]
+		},
 		"storage",
     "power"
 	],
@@ -32,5 +37,11 @@
 				"text/*"
 			]
 		}
+	},
+	"cross_origin_opener_policy": {
+		"value": "unsafe-none"
+	},
+	"cross_origin_embedder_policy": {
+		"value": "unsafe-none"
 	}
 }

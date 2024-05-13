@@ -21,6 +21,12 @@
       "minimum": 0,
       "maximum": 60
     },
+    "PRINT_FONT_FAMILY": {
+      "title": "Print Font Family",
+      "description": "Sets the default print font family, initially set to default (Roboto)",
+      "type": "string",
+      "default": "default"
+    },
     "PRINT_FONT_SIZE": {
       "title": "Print Font Size",
       "description": "Sets the default print font size, initially set to 12pt to comply with UK Exam Requirements",
@@ -81,6 +87,12 @@
       "minimum": 0,
       "maximum": 100
     },
+    "PRINT_MODE_EMBEDDED": {
+      "title": "Embedded Print Mode",
+      "description": "Set to true, this will enabled embedded print mode, otherwise iframe print mode is used",
+      "type": "boolean",
+      "default": null
+    },
     "CUSTOM_TEMPLATES": {
       "title": "List of Custom Templates",
       "description": "Custom Markdown Templates that can be added",
@@ -109,6 +121,42 @@
           }
         }
       }
-    }
+    },
+    "AUTOCORRECT": {
+      "title": "Enable OS / Browser Autocorrect in the Context Menu",
+      "description": "Enables the OS / Browser Autocorrect Context Menu (e.g. Right Click on a misspelled word - requires SPELLCHECK to be set to true). If this is explicitly set to false, this will disable the right click context menu.",
+      "type": "boolean",
+      "default": null
+    },
+    "SPELLCHECK": {
+      "title": "Enable OS / Browser Spellcheck",
+      "description": "Enables the OS / Browser Spellcheck Options (e.g. Underlines misspelled word).  If this is explicitly set to false, this will disable the right click context menu.",
+      "type": "boolean",
+      "default": null
+    },
+    "HIGHLIGHT_MISTAKES": {
+      "title": "Highlights Mistakes with Custom Spellcheck",
+      "description": "Enables the custom Typo Spellchecker to highlight (red underlining) errors and mistakes when using the app",
+      "type": "boolean",
+      "default": false
+    },
+    "SUGGEST_CORRECTIONS": {
+      "title": "Suggest Custom Spellcheck Corrections",
+      "description": "Enables a simple overlay which suggests alternative spelling when mistakes are highlighted (requires HIGHLIGHT_MISTAKES to be set to true)",
+      "type": "boolean",
+      "default": false
+    },
+    "CONTEXTUAL_CORRECTIONS": {
+      "title": "Suggest Custom Spellcheck Corrections",
+      "description": "Enables a custom Context menu which suggests alternative spelling when mistakes are highlighted (requires HIGHLIGHT_MISTAKES to be set to true)",
+      "type": "boolean",
+      "default": false
+    },
+    "DICTIONARY_LANGUAGE": {
+      "title": "Custom Spellcheck Dictionary Language Locale",
+      "description": "Current options are 'en_AU', 'en_CA', 'en_US' and 'en_GB' (which is the default)",
+      "type": "string",
+      "default": "en_GB"
+    },
 	}
 }

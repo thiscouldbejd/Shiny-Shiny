@@ -2,8 +2,21 @@
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
+
         <h5 class="modal-title">Options</h5>
+
+        <div class="justify-content-end flex-grow w-100" data-display="battery" data-show="d-flex" data-hide="d-none">
+          <div class="battery" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" data-display="battery-details">
+            <div class="battery-level d-flex align-items-center justify-content-center" data-display="battery-level">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-charge" style="display: none;" viewBox="0 0 16 16">
+                <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09zM4.157 8.5H7a.5.5 0 0 1 .478.647L6.11 13.59l5.732-6.09H9a.5.5 0 0 1-.478-.647L9.89 2.41 4.157 8.5z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
       </div>
       <div class="modal-body p-2">
         <div class="container-fluid p-0">
@@ -74,13 +87,13 @@
                           <div class="w-100 d-lg-none"></div>
 
                           <!-- Line Numbers -->
-                          <div class="form-check mr-2 mt-1">
+                          <div class="form-check me-2 mt-1">
                             <input class="form-check-input" id="lineNumbers" type="checkbox">
                             <label class="form-check-label" for="lineNumbers">Line Numbers</label>
                           </div>
 
                           <!-- Markdown -->
-                          <div class="form-check mr-2 mt-1">
+                          <div class="form-check me-2 mt-1">
                             <input class="form-check-input" id="markdownMode" type="checkbox">
                             <label class="form-check-label" for="markdownMode">Markdown</label>
                           </div>
@@ -148,13 +161,13 @@
 
                             <div class="d-flex flex-column flex-wrap flex-md-row align-items-center justify-content-between">
 
-                              <h6 class="d-flex align-items-center text-secondary">Last Saved: <span id="lastSaved" class="ml-2 badge badge-light"></span></h6>
+                              <h6 class="d-flex align-items-center text-secondary">Last Saved: <span id="lastSaved" class="ms-2 badge bg-light text-dark"></span></h6>
 
-                              <h6 class="d-flex align-items-center ml-1">Words: <span id="wordCount" class="ml-2 badge badge-warning"></span></h6>
+                              <h6 class="d-flex align-items-center ms-1">Words: <span id="wordCount" class="ms-2 badge bg-warning"></span></h6>
 
-                              <h6 class="d-flex align-items-center ml-1">Lines: <span id="lineCount" class="ml-2 badge badge-dark"></span></h6>
+                              <h6 class="d-flex align-items-center ms-1">Lines: <span id="lineCount" class="ms-2 badge bg-dark"></span></h6>
 
-                              <h6 class="d-flex align-items-center ml-1">Characters: <span id="characterCount" class="ml-2 badge badge-secondary"></span></h6>
+                              <h6 class="d-flex align-items-center ms-1">Characters: <span id="characterCount" class="ms-2 badge bg-secondary"></span></h6>
 
                             </div>
 
@@ -215,7 +228,7 @@
                         <div class="d-flex flex-wrap flex-row flex-lg-column align-self-center">
 
                           <!-- Simple Line Breaks -->
-                          <div class="form-check mr-2 mt-1">
+                          <div class="form-check me-2 mt-1">
                             <input class="form-check-input" id="simpleLineBreaks" type="checkbox">
                             <label class="form-check-label" for="simpleLineBreaks">Line Breaks</label>
                           </div>
@@ -272,6 +285,46 @@
               </div>
               <!-- Print Options Card -->
 
+              <div data-option="spelling" data-show="d-flex" data-hide="d-none"
+                class="card mb-1 mb-lg-2">
+
+                <div class="card-header border-bottom-0 d-flex align-items-center">
+                  <h5 class="mb-0 d-inline">Spelling</h5>
+                </div>
+
+                <div class="card-body p-1 p-lg-2">
+
+                  <fieldset class="container">
+
+                    <div class="row">
+
+                      <div class="col-12 align-self-center">
+
+                        <div class="row d-flex flex-column flex-wrap flex-md-row align-items-center">
+
+                          <!-- Enable Spell Check Highlighting -->
+                          <div class="form-group col-6 col-xl-4 mb-2">
+
+                            <div class="form-check mt-1">
+                              <input class="form-check-input" id="spelling-highlight" type="checkbox">
+                              <label class="form-check-label" for="spelling-highlight">Highlight Spelling Errors</label>
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </fieldset>
+
+                </div>
+
+              </div>
+              <!-- Spelling Card -->
+
             </div>
 
           </div>
@@ -287,23 +340,38 @@
             </div>
           </div>
           
+          <!-- Examples Buttons -->
+          <div class="btn-group dropup">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Examples</button>
+            <div class="dropdown-menu">
+
+              <a class="dropdown-item" id="commonCharacters" href="#">International Characters</a>
+
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" id="exampleMarkdown" href="#">Example Markdown</a>
+              <a class="dropdown-item" id="exampleAlignments" href="#">Example Text Alignments</a>
+              
+            </div>
+          </div>
+
           <!-- Insert Buttons -->
           <div class="btn-group dropup">
             <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Insert</button>
             <div class="dropdown-menu">
               <a class="dropdown-item" id="headerTemplate" href="#">Header</a>
               <a class="dropdown-item" id="headerInternalTemplate" href="#">Internal Header</a>
+
+              <div class="dropdown-divider"></div>
               <a class="dropdown-item" id="wordCounter" href="#">Word Count</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" id="commonCharacters" href="#">International Characters</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" id="exampleMarkdown" href="#">Example Markdown</a>
-              <a class="dropdown-item" id="exampleAlignments" href="#">Example Text Alignments</a>
+              <a class="dropdown-item" id="pageBreak" href="#">Page Break</a>
+              <!-- <a class="dropdown-item" id="pageNumbers" href="#">Page Numbers</a> -->
+
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" id="centerAlignment" href="#">Center Alignment</a>
               <a class="dropdown-item" id="leftAlignment" href="#">Left Alignment</a>
               <a class="dropdown-item" id="rightAlignment" href="#">Right Alignment</a>
               <a class="dropdown-item" id="justifyAlignment" href="#">Justify Alignment</a>
+
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" id="tableScaffolding" href="#">Table</a>
               <div class="px-4">
@@ -314,6 +382,7 @@
                   <input type="number" class="form-control" id="table_Rows" placeholder="rows">
                 </div>
               </div>
+
             </div>
           </div>
 
